@@ -27,33 +27,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from ctypes import create_string_buffer
-from webpdecode import WEBPDECODE, WebPDecoder, WebPImage
-import os
-import sys
+from tests.common import AbstractWebPDecodeTests, IMAGE_DATA, IMAGE_WIDTH, \
+    IMAGE_HEIGHT
+from webpdecode import WebPImage
 import unittest
 
 
-IMAGE_FILE      = os.path.join( os.path.dirname( __file__ ),
-                                "vancouver2.webp" )
-IMAGE_DATA      = file( IMAGE_FILE, "rb" ).read()
-IMAGE_WIDTH     = 644
-IMAGE_HEIGHT    = 484
-
-
-class WebPDecodeTests( unittest.TestCase ):
-
-    def setUp(self):
-        if sys.platform != "win32":
-            from ctypes import CDLL
-
-            self.assertIsInstance( WEBPDECODE, CDLL )
-
-        else:
-            raise NotImplementedError(
-                "Test non implemented under {}".format( sys.platform )
-            )
-
-        self.decoder = WebPDecoder()
+class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
 
     def test_get_info(self):
         """
@@ -165,22 +145,3 @@ class WebPImageTests( unittest.TestCase ):
         self.assertEqual( image.format, WebPImage.RGB )
         self.assertEqual( image.width, IMAGE_WIDTH )
         self.assertEqual( image.height, IMAGE_HEIGHT )
-
-
-class WebPDecodeOutputTests( unittest.TestCase ):
-    """
-    Test decode function output saving a BMP file for every decode result
-    """
-
-    def setUp(self):
-        if sys.platform != "win32":
-            from ctypes import CDLL
-
-            self.assertIsInstance( WEBPDECODE, CDLL )
-
-        else:
-            raise NotImplementedError(
-                "Test non implemented under {}".format( sys.platform )
-            )
-
-        self.decoder = WebPDecoder()
