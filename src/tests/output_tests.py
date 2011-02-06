@@ -104,9 +104,6 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
         Export decodeBGRA() method result to file
         """
         result  = self.decoder.decodeBGRA( IMAGE_DATA )
-        size    = IMAGE_WIDTH * IMAGE_HEIGHT * 4
-
-        self.assertEqual( size, len(result.bitmap) )
         image  = Image.frombuffer( "RGBA",
                                     (result.width, result.height),
                                     result.bitmap,

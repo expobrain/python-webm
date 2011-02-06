@@ -241,7 +241,7 @@ class WebPDecoder( object ):
         """
         bitmap, width, height = self._decode( data,
                                               WEBPDECODE.WebPDecodeBGRA,
-                                              self.PIXEL_SZ )
+                                              self.PIXEL_ALPHA_SZ )
 
         return WebPImage( bitmap, WebPImage.BGRA, width, height )
 

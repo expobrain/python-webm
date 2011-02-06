@@ -68,7 +68,7 @@ class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
         size    = IMAGE_WIDTH * IMAGE_HEIGHT * 3
 
         self.assertIsInstance( result, WebPImage )
-        self.assertTrue( len(result.bitmap), size )
+        self.assertEqual( len(result.bitmap), size )
         self.assertEqual( result.format, WebPImage.RGB )
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
@@ -81,7 +81,7 @@ class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
         size    = IMAGE_WIDTH * IMAGE_HEIGHT * 4
 
         self.assertIsInstance( result, WebPImage )
-        self.assertTrue( len(result.bitmap), size )
+        self.assertEqual( len(result.bitmap), size )
         self.assertEqual( result.format, WebPImage.RGBA )
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
@@ -96,7 +96,7 @@ class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
         size    = IMAGE_WIDTH * IMAGE_HEIGHT * 3
 
         self.assertIsInstance( result, WebPImage )
-        self.assertTrue( len(result.bitmap), size )
+        self.assertEqual( len(result.bitmap), size )
         self.assertEqual( result.format, WebPImage.BGR )
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
@@ -111,7 +111,7 @@ class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
         size    = IMAGE_WIDTH * IMAGE_HEIGHT * 4
 
         self.assertIsInstance( result, WebPImage )
-        self.assertTrue( len(result.bitmap), size )
+        self.assertEqual( len(result.bitmap), size )
         self.assertEqual( result.format, WebPImage.BGRA )
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
@@ -126,7 +126,7 @@ class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
         size    = IMAGE_WIDTH * IMAGE_HEIGHT * 3
 
         self.assertIsInstance( result, WebPImage )
-        self.assertTrue( len(result.bitmap), size )
+        self.assertEqual( len(result.bitmap), size )
         self.assertEqual( result.format, WebPImage.YUV )
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
