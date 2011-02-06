@@ -253,3 +253,38 @@ class WebPDecoder( object ):
                                               self.PIXEL_ALPHA_SZ )
 
         return WebPImage( bitmap, WebPImage.RGBA, width, height )
+
+    def decodeYUV(self, data):
+        """
+        Decode the given WebP image data to a YUV bitmap
+
+        :param data: The original WebP image data
+        :type data: bytearray
+        :rtype: WebPImage
+        """
+        # Prepare parameters
+        width       = c_int(-1)
+        height      = c_int(-1)
+        size        = c_uint( len(data) )
+        u           = create_string_buffer(0)
+        v           = create_string_buffer(0)
+        stride      = c_int(-1)
+        uv_stride   = c_int(-1)
+
+        # Decode image an return pointer to decoded data
+        bitmap_p = WEBPDECODE.WebPDecodeYUV( data,
+                                             size,
+                                             byref(width), byref(height),
+                                             byref(u), byref(v),
+                                             byref(stride), byref(uv_stride) )
+
+        # Copy decoded data into a buffer
+        width   = width.value
+        height  = height.value
+        size    = width * height * self.PIXEL_SZ
+        bitmap  = create_string_buffer( size )
+
+        memmove( bitmap, bitmap_p, size )
+
+        # End
+        return WebPImage( bitmap, WebPImage.YUV, width, height )

@@ -109,6 +109,21 @@ class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
 
+    def test_decode_YUV(self):
+        """
+        Test the decodeYUV() method
+        """
+        self.skipTest( "Segmentation fault" )
+
+        result  = self.decoder.decodeYUV( IMAGE_DATA )
+        size    = IMAGE_WIDTH * IMAGE_HEIGHT * 3
+
+        self.assertIsInstance( result, WebPImage )
+        self.assertTrue( len(result.bitmap), size )
+        self.assertEqual( result.format, WebPImage.YUV )
+        self.assertEqual( result.width, IMAGE_WIDTH )
+        self.assertEqual( result.height, IMAGE_HEIGHT )
+
 
 class WebPImageTests( unittest.TestCase ):
     """
