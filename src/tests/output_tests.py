@@ -26,8 +26,10 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from tests.common import AbstractWebPDecodeTests, IMAGE_DATA
+from tests.common import AbstractWebPDecodeTests, IMAGE_DATA, IMAGE_WIDTH,\
+    IMAGE_HEIGHT
 import os
+import platform
 
 try:
     import unittest2 as unittest
@@ -54,45 +56,59 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
         except:
             raise
 
-        # Make it globa
+        # Make it global
         global Image
 
         # Call superclass
         super( WebPDecodeOutputTests, self ).setUp()
 
-    def _decode_to_file(self, data, func, mode):
-        """
-        Decode data to file using the given decoder and mode
-        """
-        result = func( data )
-        image   = Image.frombuffer( mode,
-                                    (result.width, result.height),
-                                    result.bitmap,
-                                    "raw", mode, 0, 1 )
-        image.save( self.BASE_FILENAME.format( mode ) )
-
     def test_decode_RGB(self):
         """
         Export decodeRGB() method result to file
         """
-        self._decode_to_file( IMAGE_DATA, self.decoder.decodeRGB, "RGB" )
+        result = self.decoder.decodeRGB( IMAGE_DATA )
+        image  = Image.frombuffer( "RGB",
+                                    (result.width, result.height),
+                                    result.bitmap,
+                                    "raw", "RGB", 0, 1 )
+        image.save( self.BASE_FILENAME.format( "RGB" ) )
 
     def test_decode_RGBA(self):
         """
         Export decodeRGBA() method result to file
         """
-        self._decode_to_file( IMAGE_DATA, self.decoder.decodeRGBA, "RGBA" )
+        result = self.decoder.decodeRGBA( IMAGE_DATA )
+        image  = Image.frombuffer( "RGBA",
+                                    (result.width, result.height),
+                                    result.bitmap,
+                                    "raw", "RGBA", 0, 1 )
+        image.save( self.BASE_FILENAME.format( "RGBA" ) )
 
-    def test_decode_BRG(self):
+    @unittest.skipIf( platform.architecture()[0] == "64bit",
+                      "Segmentation fault under 64bit" )
+    def test_decode_BGR(self):
         """
-        Export decodeBRG() method result to file
+        Export decodeBGR() method result to file
         """
-        self.skipTest( "Segmentation fault" )
-        self._decode_to_file( IMAGE_DATA, self.decoder.decodeBGR, "BGR" )
+        result = self.decoder.decodeBGR( IMAGE_DATA )
+        image  = Image.frombuffer( "RGB",
+                                    (result.width, result.height),
+                                    result.bitmap,
+                                    "raw", "BGR", 0, 1 )
+        image.save( self.BASE_FILENAME.format( "BGR" ) )
 
+    @unittest.skipIf( platform.architecture()[0] == "64bit",
+                      "Segmentation fault under 64bit" )
     def test_decode_BGRA(self):
         """
         Export decodeBGRA() method result to file
         """
-        self.skipTest( "Segmentation fault" )
-        self._decode_to_file( IMAGE_DATA, self.decoder.decodeBGRA, "BGRA" )
+        result  = self.decoder.decodeBGRA( IMAGE_DATA )
+        size    = IMAGE_WIDTH * IMAGE_HEIGHT * 4
+
+        self.assertEqual( size, len(result.bitmap) )
+        image  = Image.frombuffer( "RGBA",
+                                    (result.width, result.height),
+                                    result.bitmap,
+                                    "raw", "BGRA", 0, 1 )
+        image.save( self.BASE_FILENAME.format( "BGRA" ) )

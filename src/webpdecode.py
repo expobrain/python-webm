@@ -36,6 +36,11 @@ if sys.platform == "win32":
 
     LIBRARY = "libwebpdecode.dll"
 
+elif sys.platform == "linux2":
+    from ctypes import cdll as loader
+
+    LIBRARY = "libwebpdecode.so"
+
 elif sys.platform == "darwin":
     from ctypes import cdll as loader
 
@@ -47,7 +52,7 @@ else:
     )
 
 # Load library
-WEBPDECODE = loader.LoadLibrary( "libwebpdecode.dylib" )
+WEBPDECODE = loader.LoadLibrary( LIBRARY )
 
 # Set return types
 WEBPDECODE.WebPDecodeRGB.restype    = c_void_p

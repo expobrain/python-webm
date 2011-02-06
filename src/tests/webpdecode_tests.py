@@ -30,6 +30,7 @@ from ctypes import create_string_buffer
 from tests.common import AbstractWebPDecodeTests, IMAGE_DATA, IMAGE_WIDTH, \
     IMAGE_HEIGHT
 from webpdecode import WebPImage
+import platform
 
 try:
     import unittest2 as unittest
@@ -85,12 +86,12 @@ class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
 
+    @unittest.skipIf( platform.architecture()[0] == "64bit",
+                      "Segmentation fault under 64bit" )
     def test_decode_BGR(self):
         """
         Test the decodeBGR() method
         """
-        self.skipTest( "Segmentation fault" )
-
         result  = self.decoder.decodeBGR( IMAGE_DATA )
         size    = IMAGE_WIDTH * IMAGE_HEIGHT * 3
 
@@ -100,13 +101,13 @@ class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
 
+    @unittest.skipIf( platform.architecture()[0] == "64bit",
+                      "Segmentation fault under 64bit" )
     def test_decode_BGRA(self):
         """
         Test the decodeBGRA() method
         """
-        self.skipTest( "Segmentation fault" )
-
-        result  = self.decoder.decodeBGR( IMAGE_DATA )
+        result  = self.decoder.decodeBGRA( IMAGE_DATA )
         size    = IMAGE_WIDTH * IMAGE_HEIGHT * 4
 
         self.assertIsInstance( result, WebPImage )
@@ -115,12 +116,12 @@ class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
 
+    @unittest.skipIf( platform.architecture()[0] == "64bit",
+                      "Segmentation fault under 64bit" )
     def test_decode_YUV(self):
         """
         Test the decodeYUV() method
         """
-        self.skipTest( "Segmentation fault" )
-
         result  = self.decoder.decodeYUV( IMAGE_DATA )
         size    = IMAGE_WIDTH * IMAGE_HEIGHT * 3
 
