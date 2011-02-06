@@ -30,7 +30,13 @@ from ctypes import create_string_buffer
 from tests.common import AbstractWebPDecodeTests, IMAGE_DATA, IMAGE_WIDTH, \
     IMAGE_HEIGHT
 from webpdecode import WebPImage
-import unittest
+
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
+except:
+    raise
 
 
 class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):

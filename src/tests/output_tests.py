@@ -28,7 +28,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from tests.common import AbstractWebPDecodeTests, IMAGE_DATA
 import os
-import unittest
+
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
+except:
+    raise
 
 
 class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
