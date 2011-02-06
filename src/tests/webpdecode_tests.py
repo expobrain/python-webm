@@ -121,10 +121,10 @@ class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
 
-#    @unittest.skipIf(
-#        sys.platform == "darwin" and platform.architecture()[0] == "64bit",
-#        "Segmentation fault under Mac OS X 64bit"
-#    )
+    @unittest.skipIf(
+        sys.platform == "darwin" and platform.architecture()[0] == "64bit",
+        "Segmentation fault under Mac OS X 64bit"
+    )
     def test_decode_YUV(self):
         """
         Test the decodeYUV() method
