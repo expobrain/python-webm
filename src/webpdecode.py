@@ -43,7 +43,7 @@ elif sys.platform == "darwin":
 
 else:
     raise NotImplementedError(
-        "Test non implemented under {}".format( sys.platform )
+        "Test non implemented under {0}".format( sys.platform )
     )
 
 # Load library

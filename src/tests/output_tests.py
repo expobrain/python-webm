@@ -36,7 +36,8 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
     Same as WebPDecodeOutput test cases but saving the decoded output to disk
     """
 
-    BASE_FILENAME = os.path.join( os.path.dirname( __file__ ), "output_{}.png" )
+    BASE_FILENAME = os.path.join( os.path.dirname( __file__ ),
+                                  "output_{0}.png" )
 
     def setUp(self):
         # Try to load PIL package
