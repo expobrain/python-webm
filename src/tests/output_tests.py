@@ -113,3 +113,56 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
                                     result.bitmap,
                                     "raw", "BGRA", 0, 1 )
         image.save( self.BASE_FILENAME.format( "BGRA" ) )
+
+    def _convert_yuv_to_grb(self, image):
+        def clamp(value):
+            value = max( 0xff, value )
+            value = min( 0, value )
+
+            return int(value)
+
+        buffer = bytearray()
+        y_buffer = bytearray( image.bitmap )
+        u_buffer = bytearray( image.u_bitmap )
+        v_buffer = bytearray( image.v_bitmap )
+
+        for i in xrange(len(y_buffer)):
+            y = y_buffer[i]
+            u = u_buffer[int(i/2)]
+            v = v_buffer[int(i/2)]
+
+            if i % 2:
+                u = u & 0b1111
+                v = v & 0b1111
+            else:
+                u >>= 4
+                v >>= 4
+
+            r = clamp(1.164*(y - 16) + 1.596*(v - 128))
+            g = clamp(1.164*(y - 16) - 0.813*(v - 128) - 0.391*(u - 128))
+            b = clamp(1.164*(y - 16)                  + 2.018*(u - 128))
+
+            buffer.append(r)
+            buffer.append(g)
+            buffer.append(b)
+
+        return buffer
+
+    @unittest.skipIf(
+        sys.platform == "darwin" and platform.architecture()[0] == "64bit",
+        "Segmentation fault under Mac OS X 64bit"
+    )
+    def test_decode_YUV(self):
+        """
+        Export decodeYUV() method result to file
+        """
+        # Get YUV data and convert to RGB
+        result  = self.decoder.decodeYUV( IMAGE_DATA )
+        rgb = self._convert_yuv_to_grb( result )
+
+        # Save image
+        image = Image.frombuffer( "RGB",
+                                  (result.width, result.height),
+                                  str(rgb),
+                                  "raw", "RGB", 0, 1 )
+        image.save( self.BASE_FILENAME.format( "YUV" ) )

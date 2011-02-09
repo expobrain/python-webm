@@ -80,7 +80,9 @@ class WebPImage( object ):
 
     FORMATS = ( RGB, RGBA, BGR, BGRA, YUV )
 
-    def __init__(self, bitmap=None, format=None, width=-1, height=-1):
+    def __init__(self, bitmap=None, format=None, width=-1, height=-1,
+                 u_bitmap=None, v_bitmap=None,
+                 stride=None, uv_stride=None):
         """
         Constructor accepts the decode image data as a bitmap and its
         width/height. Passing a null image data, and invalid format or a non
@@ -95,6 +97,11 @@ class WebPImage( object ):
                             and format in self.FORMATS
                             and width > -1
                             and height > -1 )
+
+        self.u_bitmap   = u_bitmap
+        self.v_bitmap   = v_bitmap
+        self.stride     = stride
+        self.uv_stride  = uv_stride
 
     @property
     def format(self):
@@ -284,13 +291,27 @@ class WebPDecoder( object ):
                                              byref(u), byref(v),
                                              byref(stride), byref(uv_stride) )
 
+        # Convert data to Python types
+        width       = width.value
+        height      = height.value
+        stride      = stride.value
+        uv_stride   = uv_stride.value
+
         # Copy decoded data into a buffer
-        width   = width.value
-        height  = height.value
-        size    = width * height * self.PIXEL_SZ
+        size    = stride * height
         bitmap  = create_string_buffer( size )
 
         memmove( bitmap, bitmap_p, size )
 
+        # Copy U component bitmap
+        uv_size     = uv_stride * height
+        u_bitmap    = create_string_buffer( uv_size )
+        v_bitmap    = create_string_buffer( uv_size )
+
+        memmove( u_bitmap, u, uv_size )
+        memmove( v_bitmap, v, uv_size )
+
         # End
-        return WebPImage( bitmap, WebPImage.YUV, width, height )
+        return WebPImage( bitmap, WebPImage.YUV, width, height,
+                          u_bitmap=u_bitmap, v_bitmap=v_bitmap,
+                          stride=stride, uv_stride=uv_stride )
