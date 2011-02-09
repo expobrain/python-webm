@@ -26,7 +26,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from ctypes import byref, c_int, c_uint, create_string_buffer, memmove, c_void_p
+from ctypes import byref, c_int, c_uint, create_string_buffer, memmove, c_void_p, \
+    pointer
 import sys
 
 
@@ -227,7 +228,8 @@ class WebPDecoder( object ):
         """
         bitmap, width, height = self._decode( data,
                                               WEBPDECODE.WebPDecodeBGR,
-                                              self.PIXEL_SZ )
+                                              4 )
+#                                              self.PIXEL_SZ )
 
         return WebPImage( bitmap, WebPImage.BGR, width, height )
 
@@ -271,8 +273,8 @@ class WebPDecoder( object ):
         width       = c_int(-1)
         height      = c_int(-1)
         size        = c_uint( len(data) )
-        u           = create_string_buffer(0)
-        v           = create_string_buffer(0)
+        u           = c_void_p()
+        v           = c_void_p()
         stride      = c_int(-1)
         uv_stride   = c_int(-1)
 

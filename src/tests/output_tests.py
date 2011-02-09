@@ -26,10 +26,10 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from tests.common import AbstractWebPDecodeTests, IMAGE_DATA, IMAGE_WIDTH,\
-    IMAGE_HEIGHT
+from tests.common import AbstractWebPDecodeTests, IMAGE_DATA
 import os
 import platform
+import sys
 
 try:
     import unittest2 as unittest
@@ -84,8 +84,10 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
                                     "raw", "RGBA", 0, 1 )
         image.save( self.BASE_FILENAME.format( "RGBA" ) )
 
-    @unittest.skipIf( platform.architecture()[0] == "64bit",
-                      "Segmentation fault under 64bit" )
+    @unittest.skipIf(
+        sys.platform == "darwin" and platform.architecture()[0] == "64bit",
+        "Segmentation fault under Mac OS X 64bit"
+    )
     def test_decode_BGR(self):
         """
         Export decodeBGR() method result to file
@@ -97,8 +99,10 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
                                     "raw", "BGR", 0, 1 )
         image.save( self.BASE_FILENAME.format( "BGR" ) )
 
-    @unittest.skipIf( platform.architecture()[0] == "64bit",
-                      "Segmentation fault under 64bit" )
+    @unittest.skipIf(
+        sys.platform == "darwin" and platform.architecture()[0] == "64bit",
+        "Segmentation fault under Mac OS X 64bit"
+    )
     def test_decode_BGRA(self):
         """
         Export decodeBGRA() method result to file
