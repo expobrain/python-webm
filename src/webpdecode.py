@@ -83,27 +83,64 @@ class WebPImage( object ):
     FORMATS = ( RGB, RGBA, BGR, BGRA, YUV )
 
     def __init__(self, bitmap=None, format=None, width=-1, height=-1,
-                 u_bitmap=None, v_bitmap=None,
-                 stride=None, uv_stride=None):
+                 uv_bitmap=None):
         """
         Constructor accepts the decode image data as a bitmap and its
-        width/height. Passing a null image data, and invalid format or a non
+        width/height.
+
+        Passing a null image data, and invalid format or a non
         positive integer for width/height creates an instance to an invalid WebP
         image.
+
+        If the image is in YUV format the bitmap parameter will be the Y(luma)
+        component and the UV chrominance component bitmap must be passed else
+        the image will be invalid.
+
+        :param bitmap: The image bitmap
+        :param format: The image format
+        :param width: The image width
+        :param height: The mage height
+        :param uv_bitmap: The UV(chrominance) bitmap. The first 4 MSB in every
+                          byte are the U component and the 4 LSB are the V
+                          component.
+
+        :type bitmap: bytearray
+        :type format: M{WebPImage.FORMATS}
+        :type width: int
+        :type height: int
+        :type uv_bitmap: bytearray
         """
         self._bitmap    = bitmap
+        self._u_bitmap  = None
+        self._v_bitmap  = None
         self._format    = format
         self._width     = width
         self._height    = height
-        self._is_valid  = ( bitmap != None
+        self._is_valid  = ( isinstance( bitmap, bytearray)
                             and format in self.FORMATS
                             and width > -1
                             and height > -1 )
 
-        self.u_bitmap   = u_bitmap
-        self.v_bitmap   = v_bitmap
-        self.stride     = stride
-        self.uv_stride  = uv_stride
+        # Additional setups for YUV image
+        if self._is_valid and format == self.YUV:
+            # Check if YUV image is valid
+            self._is_valid = isinstance( uv_bitmap, bytearray )
+
+            if self._is_valid:
+                # Pre-calculate U and V bitmaps
+                self._u_bitmap = bytearray()
+                self._v_bitmap = bytearray()
+
+                for h in xrange( height ):
+                    for w in xrange( width ):
+                        i = int((h * height + w) / 2)
+
+                        u = uv_bitmap[i] >> 4
+                        v = uv_bitmap[i] & 15
+
+                        self._u_bitmap.append(u)
+                        self._v_bitmap.append(v)
+
 
     @property
     def format(self):
@@ -126,11 +163,29 @@ class WebPImage( object ):
     @property
     def bitmap(self):
         """
-        Return if the image bitmap data
+        Return the image bitmap data
 
         :rtype: bool
         """
         return self._bitmap
+
+    @property
+    def u_bitmap(self):
+        """
+        Return the U chrominance bitmap
+
+        :rtype: bool
+        """
+        return self._u_bitmap
+
+    @property
+    def v_bitmap(self):
+        """
+        Return the V chrominance bitmap
+
+        :rtype: bool
+        """
+        return self._v_bitmap
 
     @property
     def width(self):
@@ -181,7 +236,7 @@ class WebPDecoder( object ):
         size    = c_uint( len(data) )
 
         # Decode image an return pointer to decoded data
-        bitmap_p = decode_func( data, size, byref(width), byref(height) )
+        bitmap_p = decode_func( str(data), size, byref(width), byref(height) )
 
         # Copy decoded data into a buffer
         width   = width.value
@@ -206,7 +261,9 @@ class WebPDecoder( object ):
         height  = c_int(-1)
         size    = c_uint( len(data) )
 
-        ret = WEBPDECODE.WebPGetInfo( data, size, byref(width), byref(height) )
+        ret = WEBPDECODE.WebPGetInfo( str(data),
+                                      size,
+                                      byref(width), byref(height) )
 
         if ret == 0:
             raise HeaderError
@@ -287,7 +344,7 @@ class WebPDecoder( object ):
         uv_stride   = c_int(-1)
 
         # Decode image an return pointer to decoded data
-        bitmap_p = WEBPDECODE.WebPDecodeYUV( data,
+        bitmap_p = WEBPDECODE.WebPDecodeYUV( str(data),
                                              size,
                                              byref(width), byref(height),
                                              byref(u), byref(v),
@@ -305,15 +362,13 @@ class WebPDecoder( object ):
 
         memmove( bitmap, bitmap_p, size )
 
-        # Copy U component bitmap
+        # Copy UV chrominace bitmap
         uv_size     = uv_stride * height
-        u_bitmap    = create_string_buffer( uv_size )
-        v_bitmap    = create_string_buffer( uv_size )
+        uv_bitmap   = create_string_buffer( uv_size )
 
-        memmove( u_bitmap, u, uv_size )
-        memmove( v_bitmap, v, uv_size )
+        memmove( uv_bitmap, u, uv_size )
 
         # End
-        return WebPImage( bitmap, WebPImage.YUV, width, height,
-                          u_bitmap=u_bitmap, v_bitmap=v_bitmap,
-                          stride=stride, uv_stride=uv_stride )
+        return WebPImage( bytearray(bitmap),
+                          WebPImage.YUV, width, height,
+                          bytearray(uv_bitmap) )

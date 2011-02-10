@@ -130,13 +130,15 @@ class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
         Test the decodeYUV() method
         """
         result  = self.decoder.decodeYUV( IMAGE_DATA )
-#        size    = IMAGE_WIDTH * IMAGE_HEIGHT * 3
+        size    = IMAGE_WIDTH * IMAGE_HEIGHT
 
         self.assertIsInstance( result, WebPImage )
-#        self.assertEqual( len(result.bitmap), size )
+        self.assertEqual( len(result.bitmap), size )
         self.assertEqual( result.format, WebPImage.YUV )
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
+        self.assertEqual( len(result.u_bitmap), size )
+        self.assertEqual( len(result.v_bitmap), size )
 
 
 class WebPImageTests( unittest.TestCase ):
@@ -165,12 +167,39 @@ class WebPImageTests( unittest.TestCase ):
         self.assertFalse( WebPImage( None, None, IMAGE_WIDTH ).isValid )
         self.assertFalse(
             WebPImage( None, None, IMAGE_WIDTH, IMAGE_HEIGHT ).isValid )
+        self.assertFalse( WebPImage( None, WebPImage.YUV, 0, 0, None ).isValid )
 
         # Valid
-        image = WebPImage(IMAGE_DATA, WebPImage.RGB, IMAGE_WIDTH, IMAGE_HEIGHT)
+        image = WebPImage( IMAGE_DATA,
+                           WebPImage.RGB,
+                           IMAGE_WIDTH,
+                           IMAGE_HEIGHT )
 
         self.assertTrue( image.isValid )
         self.assertEqual( image.bitmap, IMAGE_DATA )
         self.assertEqual( image.format, WebPImage.RGB )
         self.assertEqual( image.width, IMAGE_WIDTH )
         self.assertEqual( image.height, IMAGE_HEIGHT )
+
+    def test_is_valid_yuv(self):
+        """
+        Test isValid() property for YUV format
+        """
+        # Create fake Y and UV bitmaps
+        bitmap      = bytearray( IMAGE_WIDTH * IMAGE_HEIGHT )
+        uv_bitmap   = bytearray( int( IMAGE_WIDTH * IMAGE_HEIGHT / 2 ))
+
+        # Create image instance
+        image = WebPImage( bitmap,
+                           WebPImage.YUV,
+                           IMAGE_WIDTH, IMAGE_HEIGHT,
+                           uv_bitmap )
+
+        self.assertTrue( image.isValid )
+        self.assertEqual( image.bitmap, bitmap )
+        self.assertEqual( image.format, WebPImage.YUV )
+        self.assertEqual( image.width, IMAGE_WIDTH )
+        self.assertEqual( image.height, IMAGE_HEIGHT )
+        self.assertEqual( image.u_bitmap, bytearray( len(bitmap) ) )
+        self.assertEqual( image.v_bitmap, bytearray( len(bitmap) ) )
+

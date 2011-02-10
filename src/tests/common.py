@@ -33,7 +33,7 @@ import sys
 
 IMAGE_FILE      = os.path.join( os.path.dirname( __file__ ),
                                 "vancouver2.webp" )
-IMAGE_DATA      = file( IMAGE_FILE, "rb" ).read()
+IMAGE_DATA      = bytearray( file( IMAGE_FILE, "rb" ).read() )
 IMAGE_WIDTH     = 644
 IMAGE_HEIGHT    = 484
 

@@ -115,37 +115,7 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
                                     "raw", "BGRA", 0, 1 )
         image.save( self.BASE_FILENAME.format( "BGRA" ) )
 
-    def _convert_yuv_to_grb(self, image):
-        def clamp(value):
-            value = min( 0xff, value )
-            value = max( 0, value )
-
-            return int(value)
-
-        buffer = bytearray()
-        y_buffer = bytearray( image.bitmap )
-        u_buffer = bytearray( image.u_bitmap )
-        v_buffer = bytearray( image.v_bitmap )
-
-        for i in xrange(len(y_buffer)):
-            y = y_buffer[i]
-            u = u_buffer[int(i/2)]
-            v = v_buffer[int(i/2)]
-
-            if i % 2:
-                u = u & 0b1111
-                v = v & 0b1111
-            else:
-                u >>= 4
-                v >>= 4
-
-            buffer.append( clamp( y + 1.403 * v ) )             # R
-            buffer.append( clamp( y - 0.344 * u - 0.714 * v ) ) # G
-            buffer.append( clamp( y + 1.770 * u ) )             # B
-
-        return str( buffer )
-
-    def _convert_yuv_to_grb2(self, image):
+    def _convert_yuv_to_rgb(self, image):
         buffer = bytearray()
         y_buffer = bytearray( image.bitmap )
         u_buffer = bytearray( image.u_bitmap )
@@ -165,6 +135,7 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
 
         return str( buffer )
 
+    @unittest.skip( "NOT FIXED YET")
     @unittest.skipIf(
         sys.platform == "darwin" and platform.architecture()[0] == "64bit",
         "Segmentation fault under Mac OS X 64bit"
@@ -175,7 +146,7 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
         """
         # Get YUV data and convert to RGB
         result  = self.decoder.decodeYUV( IMAGE_DATA )
-        rgb     = self._convert_yuv_to_grb2( result )
+        rgb     = self._convert_yuv_to_rgb( result )
 
         # Save image
         image = Image.frombuffer( "RGB",
