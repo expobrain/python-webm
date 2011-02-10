@@ -30,6 +30,7 @@ from tests.common import AbstractWebPDecodeTests, IMAGE_DATA
 import os
 import platform
 import sys
+from yuv import YUVDecoder
 
 try:
     import unittest2 as unittest
@@ -144,6 +145,26 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
 
         return str( buffer )
 
+    def _convert_yuv_to_grb2(self, image):
+        buffer = bytearray()
+        y_buffer = bytearray( image.bitmap )
+        u_buffer = bytearray( image.u_bitmap )
+#        v_buffer = bytearray( image.v_bitmap )
+
+        for h in xrange( image.height ):
+            for w in xrange( image.width ):
+                y_index     = h * image.stride + w
+                uv_index    = h * image.uv_stride + int(w/2)
+
+                y = y_buffer[ y_index ]
+                u = u_buffer[ uv_index ] >> 4
+                v = u_buffer[ uv_index ]  & 0b1111
+
+                for byte in YUVDecoder.YUVtoRGB(y, u, v):
+                    buffer.append( byte )
+
+        return str( buffer )
+
     @unittest.skipIf(
         sys.platform == "darwin" and platform.architecture()[0] == "64bit",
         "Segmentation fault under Mac OS X 64bit"
@@ -154,7 +175,7 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
         """
         # Get YUV data and convert to RGB
         result  = self.decoder.decodeYUV( IMAGE_DATA )
-        rgb     = self._convert_yuv_to_grb( result )
+        rgb     = self._convert_yuv_to_grb2( result )
 
         # Save image
         image = Image.frombuffer( "RGB",
