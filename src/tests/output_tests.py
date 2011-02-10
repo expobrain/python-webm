@@ -116,8 +116,8 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
 
     def _convert_yuv_to_grb(self, image):
         def clamp(value):
-            value = max( 0xff, value )
-            value = min( 0, value )
+            value = min( 0xff, value )
+            value = max( 0, value )
 
             return int(value)
 
@@ -138,15 +138,11 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
                 u >>= 4
                 v >>= 4
 
-            r = clamp(1.164*(y - 16) + 1.596*(v - 128))
-            g = clamp(1.164*(y - 16) - 0.813*(v - 128) - 0.391*(u - 128))
-            b = clamp(1.164*(y - 16)                  + 2.018*(u - 128))
+            buffer.append( clamp( y + 1.403 * v ) )             # R
+            buffer.append( clamp( y - 0.344 * u - 0.714 * v ) ) # G
+            buffer.append( clamp( y + 1.770 * u ) )             # B
 
-            buffer.append(r)
-            buffer.append(g)
-            buffer.append(b)
-
-        return buffer
+        return str( buffer )
 
     @unittest.skipIf(
         sys.platform == "darwin" and platform.architecture()[0] == "64bit",
@@ -158,11 +154,11 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
         """
         # Get YUV data and convert to RGB
         result  = self.decoder.decodeYUV( IMAGE_DATA )
-        rgb = self._convert_yuv_to_grb( result )
+        rgb     = self._convert_yuv_to_grb( result )
 
         # Save image
         image = Image.frombuffer( "RGB",
                                   (result.width, result.height),
-                                  str(rgb),
+                                  rgb,
                                   "raw", "RGB", 0, 1 )
         image.save( self.BASE_FILENAME.format( "YUV" ) )
