@@ -26,8 +26,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from ctypes import byref, c_int, c_uint, create_string_buffer, memmove, c_void_p, \
-    pointer
+from ctypes import byref, c_int, c_uint, create_string_buffer, memmove, c_void_p
 import sys
 
 
