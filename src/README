@@ -26,6 +26,7 @@ Prerequisites
 Below a list of prerequisites to use the python-webm package:
 
 * Python 2.6.5+ (http://www.python.org)
+* Python nose (http://code.google.com/p/python-nose)
 * libvpx from sources (http://www.webmproject.org/code/#webm-repositories)
 * libwebp from sources (http://www.webmproject.org/code/#webp-repositories)
 * Python PIL for some unit tests (http://www.pythonware.com/products/pil)
@@ -42,3 +43,21 @@ At the moment only decode functions are implemented. To use those function
 create a new instance of WebPDecoder() class and call its methods with the
 required arguments and keywords. Read the docstrings to know about what type of
 arguments and keywords are required and what type of result is returned.
+
+
+Unit testing
+------------
+
+To run the unit tests you must first install the Python nose package from the
+official web site http://code.google.com/p/python-nose or from PyPI (preferred)
+by running:
+
+$ easy_install nose
+
+Nose is a very helpful library to discover, manage and run unit tests. If you
+are lazy and you want to run the tests immediately just run:
+
+$ nosetests -s -x
+
+to discover and run the unit tests, without capturing the stdout (-s) and
+stopping the tests at the first fail or error (-x).
