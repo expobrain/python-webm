@@ -25,6 +25,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
+from webpdecode import WebPImage
 
 """
 Porting of the YUVtoRGB converter code from the Chromium project. See
@@ -69,35 +70,42 @@ class YUVDecoder( object ):
     """
 
     @staticmethod
-    def YUVtoRGB(y, u, v):
+    def YUVtoRGB(image):
         """
-        Convert YUV data to RGB
+        Convert the given WebP image instance from a YUV format to an RGB format
 
-        :param y: The luma component
-        :param u: The U chrominance component
-        :param v: The V chrominance component
-
-        :type y: bytearray
-        :type u: bytearray
-        :type v: bytearray
-
-        :rtype: list(int, int, int)
+        :param image: The WebP image in YUV format
+        :type image: WebPImage
+        :rtype: WebPImage
         """
-        r_off = VP8kVToR[v]
-        g_off = (VP8kVToG[v] + VP8kUToG[u]) >> YUV_FIX
-        b_off = VP8kUToB[u]
+        # Convert YUV to RGB
+        rgb_bitmap = bytearray()
 
-        try:
+        for i in xrange( len( image.bitmap ) ):
+            # Get YUV data
+            y = image.bitmap[i]
+            u = image.u_bitmap[i]
+            v = image.v_bitmap[i]
+
+            # Calculate RGB values
+            r_off = VP8kVToR[v]
+            g_off = (VP8kVToG[v] + VP8kUToG[u]) >> YUV_FIX
+            b_off = VP8kUToB[u]
+
             r = VP8kClip[y + r_off - YUV_RANGE_MIN]
-        except IndexError:
-            print(len(VP8kClip),y , r_off , YUV_RANGE_MIN, y + r_off - YUV_RANGE_MIN)
-            raise
-        except:
-            raise
-        g = VP8kClip[y + g_off - YUV_RANGE_MIN]
-        b = VP8kClip[y + b_off - YUV_RANGE_MIN]
+            g = VP8kClip[y + g_off - YUV_RANGE_MIN]
+            b = VP8kClip[y + b_off - YUV_RANGE_MIN]
 
-        return r, g, b
+            # Push values into buffer
+            rgb_bitmap.append( r )
+            rgb_bitmap.append( g )
+            rgb_bitmap.append( b )
+
+        # Return the WebPImage in RGB format
+        return WebPImage( rgb_bitmap,
+                          WebPImage.RGB,
+                          image.width, image.height )
+
 
 """
 inline static void VP8YuvToRgb(uint8_t y, uint8_t u, uint8_t v,

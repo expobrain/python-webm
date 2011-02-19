@@ -28,8 +28,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from tests.common import AbstractWebPDecodeTests, IMAGE_DATA
 import os
-import platform
-import sys
 from yuv import YUVDecoder
 
 try:
@@ -107,38 +105,17 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
                                     "raw", "BGRA", 0, 1 )
         image.save( self.BASE_FILENAME.format( "BGRA" ) )
 
-    def _convert_yuv_to_rgb(self, image):
-        buffer = bytearray()
-        y_buffer = bytearray( image.bitmap )
-        u_buffer = bytearray( image.u_bitmap )
-#        v_buffer = bytearray( image.v_bitmap )
-
-        for h in xrange( image.height ):
-            for w in xrange( image.width ):
-                y_index     = h * image.stride + w
-                uv_index    = h * image.uv_stride + int(w/2)
-
-                y = y_buffer[ y_index ]
-                u = u_buffer[ uv_index ] >> 4
-                v = u_buffer[ uv_index ]  & 0b1111
-
-                for byte in YUVDecoder.YUVtoRGB(y, u, v):
-                    buffer.append( byte )
-
-        return str( buffer )
-
-    @unittest.skip( "NOT FIXED YET")
     def test_decode_YUV(self):
         """
         Export decodeYUV() method result to file
         """
         # Get YUV data and convert to RGB
-        result  = self.decoder.decodeYUV( IMAGE_DATA )
-        rgb     = self._convert_yuv_to_rgb( result )
+        result = self.decoder.decodeYUV( IMAGE_DATA )
+        result = YUVDecoder.YUVtoRGB( result )
 
         # Save image
         image = Image.frombuffer( "RGB",
                                   (result.width, result.height),
-                                  rgb,
+                                  str(result.bitmap),
                                   "raw", "RGB", 0, 1 )
         image.save( self.BASE_FILENAME.format( "YUV" ) )
