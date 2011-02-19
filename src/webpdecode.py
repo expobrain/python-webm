@@ -60,6 +60,9 @@ WEBPDECODE = loader.LoadLibrary( LIBRARY )
 # Set return types
 WEBPDECODE.WebPDecodeRGB.restype    = c_void_p
 WEBPDECODE.WebPDecodeRGBA.restype   = c_void_p
+WEBPDECODE.WebPDecodeBGR.restype    = c_void_p
+WEBPDECODE.WebPDecodeBGRA.restype   = c_void_p
+WEBPDECODE.WebPDecodeYUV.restype    = c_void_p
 WEBPDECODE.WebPGetInfo.restype      = c_uint
 
 
@@ -247,7 +250,7 @@ class WebPDecoder( object ):
         memmove( bitmap, bitmap_p, size )
 
         # End
-        return ( bitmap, width, height )
+        return ( bytearray(bitmap), width, height )
 
     def getInfo(self, data):
         """

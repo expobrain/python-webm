@@ -30,8 +30,6 @@ from ctypes import create_string_buffer
 from tests.common import AbstractWebPDecodeTests, IMAGE_DATA, IMAGE_WIDTH, \
     IMAGE_HEIGHT
 from webpdecode import WebPImage
-import platform
-import sys
 
 try:
     import unittest2 as unittest
@@ -87,10 +85,6 @@ class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
 
-    @unittest.skipIf(
-        sys.platform == "darwin" and platform.architecture()[0] == "64bit",
-        "Segmentation fault under Mac OS X 64bit"
-    )
     def test_decode_BGR(self):
         """
         Test the decodeBGR() method
@@ -104,10 +98,6 @@ class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
 
-    @unittest.skipIf(
-        sys.platform == "darwin" and platform.architecture()[0] == "64bit",
-        "Segmentation fault under Mac OS X 64bit"
-    )
     def test_decode_BGRA(self):
         """
         Test the decodeBGRA() method
@@ -121,10 +111,6 @@ class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
 
-    @unittest.skipIf(
-        sys.platform == "darwin" and platform.architecture()[0] == "64bit",
-        "Segmentation fault under Mac OS X 64bit"
-    )
     def test_decode_YUV(self):
         """
         Test the decodeYUV() method

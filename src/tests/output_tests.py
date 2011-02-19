@@ -70,7 +70,7 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
         result = self.decoder.decodeRGB( IMAGE_DATA )
         image  = Image.frombuffer( "RGB",
                                     (result.width, result.height),
-                                    result.bitmap,
+                                    str(result.bitmap),
                                     "raw", "RGB", 0, 1 )
         image.save( self.BASE_FILENAME.format( "RGB" ) )
 
@@ -85,10 +85,6 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
                                     "raw", "RGBA", 0, 1 )
         image.save( self.BASE_FILENAME.format( "RGBA" ) )
 
-    @unittest.skipIf(
-        sys.platform == "darwin" and platform.architecture()[0] == "64bit",
-        "Segmentation fault under Mac OS X 64bit"
-    )
     def test_decode_BGR(self):
         """
         Export decodeBGR() method result to file
@@ -96,14 +92,10 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
         result = self.decoder.decodeBGR( IMAGE_DATA )
         image  = Image.frombuffer( "RGB",
                                     (result.width, result.height),
-                                    result.bitmap,
+                                    str(result.bitmap),
                                     "raw", "BGR", 0, 1 )
         image.save( self.BASE_FILENAME.format( "BGR" ) )
 
-    @unittest.skipIf(
-        sys.platform == "darwin" and platform.architecture()[0] == "64bit",
-        "Segmentation fault under Mac OS X 64bit"
-    )
     def test_decode_BGRA(self):
         """
         Export decodeBGRA() method result to file
@@ -111,7 +103,7 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
         result  = self.decoder.decodeBGRA( IMAGE_DATA )
         image  = Image.frombuffer( "RGBA",
                                     (result.width, result.height),
-                                    result.bitmap,
+                                    str(result.bitmap),
                                     "raw", "BGRA", 0, 1 )
         image.save( self.BASE_FILENAME.format( "BGRA" ) )
 
@@ -136,10 +128,6 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
         return str( buffer )
 
     @unittest.skip( "NOT FIXED YET")
-    @unittest.skipIf(
-        sys.platform == "darwin" and platform.architecture()[0] == "64bit",
-        "Segmentation fault under Mac OS X 64bit"
-    )
     def test_decode_YUV(self):
         """
         Export decodeYUV() method result to file
