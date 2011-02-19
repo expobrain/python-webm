@@ -1,5 +1,5 @@
-Python-WebM 0.1
-===============
+Python-WebM
+===========
 
 The python-webm package is an interface to the Google WebM new video/image codec
 which promise a better compression of image and video data.
@@ -16,8 +16,8 @@ package:
 
 * Windows: NOT SUPPORTED YET
 * Ubuntu 32bit: SUPPORTED (tested on Ubuntu 10.10)
-* Ubuntu 64bit: NOT TESTED
-* Mac OS X: ALMOST SUPPORTED (tested on Snow Leopard, some calls doesn't work)
+* Ubuntu 64bit: NOT TESTED YET
+* Mac OS X: SUPPOERTED(tested with Python 64bit on Snow Leopard 10.6.6)
 
 
 Prerequisites
@@ -52,12 +52,12 @@ To run the unit tests you must first install the Python nose package from the
 official web site http://code.google.com/p/python-nose or from PyPI (preferred)
 by running:
 
-$ easy_install nose
+  $ easy_install nose
 
 Nose is a very helpful library to discover, manage and run unit tests. If you
 are lazy and you want to run the tests immediately just run:
 
-$ nosetests -s -x
+  $ nosetests -s -x
 
 to discover and run the unit tests, without capturing the stdout (-s) and
 stopping the tests at the first fail or error (-x).
