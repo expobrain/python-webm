@@ -29,6 +29,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 from ctypes import byref, c_int, c_uint, create_string_buffer, memmove, c_void_p
 import sys
 
+# Generic constants
+__VERSION__ = "0.1"
+
 
 # Per-OS setup
 if sys.platform == "win32":

@@ -1,5 +1,5 @@
-Python-WebM
-===========
+Python-WebM 0.1
+===============
 
 The python-webm package is an interface to the Google WebM new video/image codec
 which promise a better compression of image and video data.
