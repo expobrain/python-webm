@@ -1,0 +1,12 @@
+Release 0.1.2
+-------------
+
+- Implement YUV to RGBA
+- Implement YUV to BGR
+- Implement YUV to BGRA
+
+
+Release 0.2
+-----------
+
+- Re-organise classes and modules and also unit tests
