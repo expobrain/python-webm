@@ -27,8 +27,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from tests.common import AbstractWebPDecodeTests, IMAGE_DATA
-import os
 from yuv import YUVDecoder
+import os
+import sys
 
 try:
     import unittest2 as unittest
@@ -105,17 +106,34 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
                                     "raw", "BGRA", 0, 1 )
         image.save( self.BASE_FILENAME.format( "BGRA" ) )
 
-    def test_decode_YUV(self):
+    def test_decode_YUV_to_RGB(self):
         """
-        Export decodeYUV() method result to file
+        Export decodeYUV() method result to a RGB file
         """
         # Get YUV data and convert to RGB
         result = self.decoder.decodeYUV( IMAGE_DATA )
-        result = YUVDecoder.YUVtoRGB( result )
+        result = YUVDecoder().YUVtoRGB( result )
 
         # Save image
         image = Image.frombuffer( "RGB",
                                   (result.width, result.height),
                                   str(result.bitmap),
                                   "raw", "RGB", 0, 1 )
-        image.save( self.BASE_FILENAME.format( "YUV" ) )
+        image.save( self.BASE_FILENAME.format( "YUV_RGB" ) )
+
+    @unittest.skipIf(sys.platform == "darwin",
+                     "Segmentation fault if call decodeYUV() twice")
+    def test_decode_YUV_to_RGBA(self):
+        """
+        Export decodeYUV() method result to a RGBA file
+        """
+        # Get YUV data and convert to RGB
+        result = self.decoder.decodeYUV( IMAGE_DATA )
+        result = YUVDecoder().YUVtoRGBA( result )
+
+        # Save image
+        image = Image.frombuffer( "RGBA",
+                                  (result.width, result.height),
+                                  str(result.bitmap),
+                                  "raw", "RGBA", 0, 1 )
+        image.save( self.BASE_FILENAME.format( "YUV_RGBA" ) )

@@ -123,8 +123,8 @@ class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
         self.assertEqual( result.format, WebPImage.YUV )
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
-        self.assertEqual( len(result.u_bitmap), size )
-        self.assertEqual( len(result.v_bitmap), size )
+        self.assertEqual( len(result.u_bitmap), size / 2 )
+        self.assertEqual( len(result.v_bitmap), size / 2 )
 
 
 class WebPImageTests( unittest.TestCase ):
@@ -179,13 +179,15 @@ class WebPImageTests( unittest.TestCase ):
         image = WebPImage( bitmap,
                            WebPImage.YUV,
                            IMAGE_WIDTH, IMAGE_HEIGHT,
-                           uv_bitmap )
+                           u_bitmap=uv_bitmap, v_bitmap=uv_bitmap,
+                           stride=IMAGE_WIDTH, uv_stride=int(IMAGE_WIDTH/2) )
 
         self.assertTrue( image.isValid )
         self.assertEqual( image.bitmap, bitmap )
         self.assertEqual( image.format, WebPImage.YUV )
         self.assertEqual( image.width, IMAGE_WIDTH )
         self.assertEqual( image.height, IMAGE_HEIGHT )
-        self.assertEqual( image.u_bitmap, bytearray( len(bitmap) ) )
-        self.assertEqual( image.v_bitmap, bytearray( len(bitmap) ) )
-
+        self.assertEqual( image.u_bitmap, uv_bitmap )
+        self.assertEqual( image.v_bitmap, uv_bitmap )
+        self.assertEqual( image.stride, IMAGE_WIDTH )
+        self.assertEqual( image.uv_stride, int(IMAGE_WIDTH / 2) )

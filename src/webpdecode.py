@@ -86,7 +86,7 @@ class WebPImage( object ):
     FORMATS = ( RGB, RGBA, BGR, BGRA, YUV )
 
     def __init__(self, bitmap=None, format=None, width=-1, height=-1,
-                 uv_bitmap=None):
+                 u_bitmap=None, v_bitmap=None, stride=-1, uv_stride=-1 ):
         """
         Constructor accepts the decode image data as a bitmap and its
         width/height.
@@ -96,26 +96,33 @@ class WebPImage( object ):
         image.
 
         If the image is in YUV format the bitmap parameter will be the Y(luma)
-        component and the UV chrominance component bitmap must be passed else
-        the image will be invalid.
+        component and the U/V chrominance component bitmap must be passed else
+        the image will be invalid. The Y bitmap stride and the UV bitmap stride
+        must be passed as well.
 
         :param bitmap: The image bitmap
         :param format: The image format
         :param width: The image width
         :param height: The mage height
-        :param uv_bitmap: The UV(chrominance) bitmap. The first 4 MSB in every
-                          byte are the U component and the 4 LSB are the V
-                          component.
+        :param u_bitmap: The U chrominance component bitmap
+        :param v_bitmap: The V chrominance component bitmap
+        :param stride: The Y bitmap stride
+        :param uv_stride: The UV stride
 
         :type bitmap: bytearray
         :type format: M{WebPImage.FORMATS}
         :type width: int
         :type height: int
-        :type uv_bitmap: bytearray
+        :type u_bitmap: bytearray
+        :type v_bitmap: bytearray
+        :type stride: int
+        :type uv_stride: int
         """
         self._bitmap    = bitmap
-        self._u_bitmap  = None
-        self._v_bitmap  = None
+        self._u_bitmap  = u_bitmap
+        self._v_bitmap  = v_bitmap
+        self._stride    = stride
+        self._uv_stride = uv_stride
         self._format    = format
         self._width     = width
         self._height    = height
@@ -127,23 +134,10 @@ class WebPImage( object ):
         # Additional setups for YUV image
         if self._is_valid and format == self.YUV:
             # Check if YUV image is valid
-            self._is_valid = isinstance( uv_bitmap, bytearray )
-
-            if self._is_valid:
-                # Pre-calculate U and V bitmaps
-                self._u_bitmap = bytearray()
-                self._v_bitmap = bytearray()
-
-                for h in xrange( height ):
-                    for w in xrange( width ):
-                        i = int((h * height + w) / 2)
-
-                        u = uv_bitmap[i] >> 4
-                        v = uv_bitmap[i] & 15
-
-                        self._u_bitmap.append(u)
-                        self._v_bitmap.append(v)
-
+            self._is_valid = ( isinstance( u_bitmap, bytearray )
+                               and isinstance( v_bitmap, bytearray )
+                               and stride > -1
+                               and uv_stride > -1 )
 
     @property
     def format(self):
@@ -173,27 +167,9 @@ class WebPImage( object ):
         return self._bitmap
 
     @property
-    def u_bitmap(self):
-        """
-        Return the U chrominance bitmap
-
-        :rtype: bool
-        """
-        return self._u_bitmap
-
-    @property
-    def v_bitmap(self):
-        """
-        Return the V chrominance bitmap
-
-        :rtype: bool
-        """
-        return self._v_bitmap
-
-    @property
     def width(self):
         """
-        Return if the image width
+        Return the image width
 
         :rtype: int
         """
@@ -202,11 +178,47 @@ class WebPImage( object ):
     @property
     def height(self):
         """
-        Return if the image height
+        Return the image height
 
         :rtype: int
         """
         return self._height
+
+    @property
+    def u_bitmap(self):
+        """
+        Return the U chrominance bitmap
+
+        :rtype: bytearray
+        """
+        return self._u_bitmap
+
+    @property
+    def v_bitmap(self):
+        """
+        Return the V chrominance bitmap
+
+        :rtype: bytearray
+        """
+        return self._v_bitmap
+
+    @property
+    def stride(self):
+        """
+        Return the bitmap stride
+
+        :rtype: int
+        """
+        return self._stride
+
+    @property
+    def uv_stride(self):
+        """
+        Return the UV chrominance bitmap stride
+
+        :rtype: int
+        """
+        return self._uv_stride
 
 
 class WebPDecoder( object ):
@@ -367,11 +379,15 @@ class WebPDecoder( object ):
 
         # Copy UV chrominace bitmap
         uv_size     = uv_stride * height
-        uv_bitmap   = create_string_buffer( uv_size )
+        u_bitmap    = create_string_buffer( uv_size )
+        v_bitmap    = create_string_buffer( uv_size )
 
-        memmove( uv_bitmap, u, uv_size )
+        memmove( u_bitmap, u, uv_size )
+        memmove( v_bitmap, v, uv_size )
 
         # End
         return WebPImage( bytearray(bitmap),
                           WebPImage.YUV, width, height,
-                          bytearray(uv_bitmap) )
+                          u_bitmap=bytearray(u_bitmap),
+                          v_bitmap=bytearray(v_bitmap),
+                          stride=stride, uv_stride=uv_stride )
