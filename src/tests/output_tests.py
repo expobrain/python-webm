@@ -121,8 +121,6 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
                                   "raw", "RGB", 0, 1 )
         image.save( self.BASE_FILENAME.format( "YUV_RGB" ) )
 
-    @unittest.skipIf(sys.platform == "darwin",
-                     "Segmentation fault if call decodeYUV() twice")
     def test_decode_YUV_to_RGBA(self):
         """
         Export decodeYUV() method result to a RGBA file

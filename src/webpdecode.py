@@ -353,8 +353,8 @@ class WebPDecoder( object ):
         width       = c_int(-1)
         height      = c_int(-1)
         size        = c_uint( len(data) )
-        u           = c_void_p()
-        v           = c_void_p()
+        u           = create_string_buffer(0)
+        v           = create_string_buffer(0)
         stride      = c_int(-1)
         uv_stride   = c_int(-1)
 
