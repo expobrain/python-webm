@@ -135,3 +135,33 @@ class WebPDecodeOutputTests( AbstractWebPDecodeTests, unittest.TestCase ):
                                   str(result.bitmap),
                                   "raw", "RGBA", 0, 1 )
         image.save( self.BASE_FILENAME.format( "YUV_RGBA" ) )
+
+    def test_decode_YUV_to_BGR(self):
+        """
+        Export decodeYUV() method result to a BGR file
+        """
+        # Get YUV data and convert to BGR
+        result = self.decoder.decodeYUV( IMAGE_DATA )
+        result = YUVDecoder().YUVtoBGR( result )
+
+        # Save image
+        image = Image.frombuffer( "RGB",
+                                  (result.width, result.height),
+                                  str(result.bitmap),
+                                  "raw", "BGR", 0, 1 )
+        image.save( self.BASE_FILENAME.format( "YUV_BGR" ) )
+
+    def test_decode_YUV_to_BGRA(self):
+        """
+        Export decodeYUV() method result to a BGRA file
+        """
+        # Get YUV data and convert to BGRA
+        result = self.decoder.decodeYUV( IMAGE_DATA )
+        result = YUVDecoder().YUVtoBGRA( result )
+
+        # Save image
+        image = Image.frombuffer( "RGBA",
+                                  (result.width, result.height),
+                                  str(result.bitmap),
+                                  "raw", "BGRA", 0, 1 )
+        image.save( self.BASE_FILENAME.format( "YUV_BGRA" ) )
