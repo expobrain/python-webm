@@ -85,24 +85,31 @@ class YUVDecoder( object ):
                 i = h * image.stride + w
                 y = image.bitmap[i]
 
-                # Get chrominance
-                i = h * image.uv_stride + int(w/2)
+                # WORKAROUND:
+                # This is a workaround for YUV to RGB decoding to have a useful
+                # grayscale image from the YUV data.
+                # Remove this when the correct YUV to color RGB function is
+                # found.
+                rgb_bitmap.extend(( y, y, y ))
 
-                if w % 2:
-                    u = image.u_bitmap[i] & 0b1111
-                    v = image.v_bitmap[i] & 0b1111
-                else:
-                    u = image.u_bitmap[i] >> 4
-                    v = image.v_bitmap[i] >> 4
-
-                # Calculate RGB values
-                r_off = VP8kVToR[v]
-                g_off = (VP8kVToG[v] + VP8kUToG[u]) >> YUV_FIX
-                b_off = VP8kUToB[u]
-
-                rgb_bitmap.append( VP8kClip[y + r_off - YUV_RANGE_MIN] )
-                rgb_bitmap.append( VP8kClip[y + g_off - YUV_RANGE_MIN] )
-                rgb_bitmap.append( VP8kClip[y + b_off - YUV_RANGE_MIN] )
+#                # Get chrominance
+#                i = h * image.uv_stride + int(w/2)
+#
+#                if w % 2:
+#                    u = image.u_bitmap[i] & 0b1111
+#                    v = image.v_bitmap[i] & 0b1111
+#                else:
+#                    u = image.u_bitmap[i] >> 4
+#                    v = image.v_bitmap[i] >> 4
+#
+#                # Calculate RGB values
+#                r_off = VP8kVToR[v]
+#                g_off = (VP8kVToG[v] + VP8kUToG[u]) >> YUV_FIX
+#                b_off = VP8kUToB[u]
+#
+#                rgb_bitmap.append( VP8kClip[y + r_off - YUV_RANGE_MIN] )
+#                rgb_bitmap.append( VP8kClip[y + g_off - YUV_RANGE_MIN] )
+#                rgb_bitmap.append( VP8kClip[y + b_off - YUV_RANGE_MIN] )
 
         # End
         return rgb_bitmap
