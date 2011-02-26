@@ -69,30 +69,6 @@ class YUVDecoder( object ):
     Decodes YUV data to different formats
     """
 
-    def _decode_YUV_pixel(self, y, u, v):
-        """
-        Decode the given YUV values to an RGB triplets
-
-        :param y: The luma component
-        :param u: The U chrominance component
-        :param v: The V chrominance component
-
-        :type y: int
-        :type u: int
-        :type v: int
-        """
-        # Calculate RGB values
-        r_off = VP8kVToR[v]
-        g_off = (VP8kVToG[v] + VP8kUToG[u]) >> YUV_FIX
-        b_off = VP8kUToB[u]
-
-        r = VP8kClip[y + r_off - YUV_RANGE_MIN]
-        g = VP8kClip[y + g_off - YUV_RANGE_MIN]
-        b = VP8kClip[y + b_off - YUV_RANGE_MIN]
-
-        # Return values
-        return r, g, b
-
     def _decode_YUV_image(self, image):
         """
         Decode the given image in YUV format to a RGB byte array
@@ -119,9 +95,14 @@ class YUVDecoder( object ):
                     u = image.u_bitmap[i] >> 4
                     v = image.v_bitmap[i] >> 4
 
-                # Decode to RGB data
-                for value in self._decode_YUV_pixel( y, u, v ):
-                    rgb_bitmap.append( value )
+                # Calculate RGB values
+                r_off = VP8kVToR[v]
+                g_off = (VP8kVToG[v] + VP8kUToG[u]) >> YUV_FIX
+                b_off = VP8kUToB[u]
+
+                rgb_bitmap.append( VP8kClip[y + r_off - YUV_RANGE_MIN] )
+                rgb_bitmap.append( VP8kClip[y + g_off - YUV_RANGE_MIN] )
+                rgb_bitmap.append( VP8kClip[y + b_off - YUV_RANGE_MIN] )
 
         # End
         return rgb_bitmap
