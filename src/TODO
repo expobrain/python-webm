@@ -1,12 +1,3 @@
-Release 0.1.2
--------------
-
-x Implement YUV to RGBA
-x Implement YUV to BGR
-x Implement YUV to BGRA
-- Fix the WebPImage.u|v_bitmap values when a YUV image format
-
-
 Release 0.1.3
 -------------
 

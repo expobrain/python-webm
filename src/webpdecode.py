@@ -30,7 +30,7 @@ from ctypes import byref, c_int, c_uint, create_string_buffer, memmove, c_void_p
 import sys
 
 # Generic constants
-__VERSION__ = "0.1.2beta"
+__VERSION__ = "0.1.2"
 
 
 # Per-OS setup
