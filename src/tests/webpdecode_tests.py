@@ -123,8 +123,10 @@ class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
         self.assertEqual( result.format, WebPImage.YUV )
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
-        self.assertEqual( len(result.u_bitmap), size / 2 )
-        self.assertEqual( len(result.v_bitmap), size / 2 )
+        self.assertEqual( len(result.u_bitmap),
+                          result.uv_stride * result.width )
+        self.assertEqual( len(result.v_bitmap),
+                          result.uv_stride * result.height )
 
 
 class WebPImageTests( unittest.TestCase ):

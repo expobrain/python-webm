@@ -378,12 +378,13 @@ class WebPDecoder( object ):
         memmove( bitmap, bitmap_p, size )
 
         # Copy UV chrominace bitmap
-        uv_size     = uv_stride * height
-        u_bitmap    = create_string_buffer( uv_size )
-        v_bitmap    = create_string_buffer( uv_size )
+        u_size      = uv_stride * width
+        v_size      = uv_stride * height
+        u_bitmap    = create_string_buffer( u_size )
+        v_bitmap    = create_string_buffer( v_size )
 
-        memmove( u_bitmap, u, uv_size )
-        memmove( v_bitmap, v, uv_size )
+        memmove( u_bitmap, u, u_size )
+        memmove( v_bitmap, v, v_size )
 
         # End
         return WebPImage( bytearray(bitmap),
