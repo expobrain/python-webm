@@ -26,6 +26,10 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+from PIL import Image
+from tests.common import IMAGE_DATA, WebPDecodeMixin, OUTPUT_FILENAME
+from yuv import YUVDecoder
+
 try:
     import unittest2 as unittest
 except ImportError:
@@ -34,7 +38,7 @@ except:
     raise
 
 
-class YuvTests( unittest.TestCase ):
+class YuvTests( WebPDecodeMixin, unittest.TestCase ):
     """
     YUV to RGB conversion module test case
     """
@@ -58,3 +62,63 @@ class YuvTests( unittest.TestCase ):
         self.assertNotEqual( yuv.VP8kUToG, [0] * 256 )
         self.assertNotEqual( yuv.VP8kClip,
                              [0] * (yuv.YUV_RANGE_MAX - yuv.YUV_RANGE_MIN) )
+
+    def test_output_YUV_to_RGB(self):
+        """
+        Export decodeYUV() method result to a RGB file
+        """
+        # Get YUV data and convert to RGB
+        result = self.decoder.decodeYUV( IMAGE_DATA )
+        result = YUVDecoder().YUVtoRGB( result )
+
+        # Save image
+        image = Image.frombuffer( "RGB",
+                                  (result.width, result.height),
+                                  str(result.bitmap),
+                                  "raw", "RGB", 0, 1 )
+        image.save( OUTPUT_FILENAME.format( "YUV_RGB" ) )
+
+    def test_output_YUV_to_RGBA(self):
+        """
+        Export decodeYUV() method result to a RGBA file
+        """
+        # Get YUV data and convert to RGB
+        result = self.decoder.decodeYUV( IMAGE_DATA )
+        result = YUVDecoder().YUVtoRGBA( result )
+
+        # Save image
+        image = Image.frombuffer( "RGBA",
+                                  (result.width, result.height),
+                                  str(result.bitmap),
+                                  "raw", "RGBA", 0, 1 )
+        image.save( OUTPUT_FILENAME.format( "YUV_RGBA" ) )
+
+    def test_output_YUV_to_BGR(self):
+        """
+        Export decodeYUV() method result to a BGR file
+        """
+        # Get YUV data and convert to BGR
+        result = self.decoder.decodeYUV( IMAGE_DATA )
+        result = YUVDecoder().YUVtoBGR( result )
+
+        # Save image
+        image = Image.frombuffer( "RGB",
+                                  (result.width, result.height),
+                                  str(result.bitmap),
+                                  "raw", "BGR", 0, 1 )
+        image.save( OUTPUT_FILENAME.format( "YUV_BGR" ) )
+
+    def test_output_YUV_to_BGRA(self):
+        """
+        Export decodeYUV() method result to a BGRA file
+        """
+        # Get YUV data and convert to BGRA
+        result = self.decoder.decodeYUV( IMAGE_DATA )
+        result = YUVDecoder().YUVtoBGRA( result )
+
+        # Save image
+        image = Image.frombuffer( "RGBA",
+                                  (result.width, result.height),
+                                  str(result.bitmap),
+                                  "raw", "BGRA", 0, 1 )
+        image.save( OUTPUT_FILENAME.format( "YUV_BGRA" ) )

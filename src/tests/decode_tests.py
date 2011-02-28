@@ -26,10 +26,11 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+from PIL import Image
 from ctypes import create_string_buffer
-from tests.common import AbstractWebPDecodeTests, IMAGE_DATA, IMAGE_WIDTH, \
-    IMAGE_HEIGHT
-from webpdecode import WebPImage
+from handlers import WebPImage
+from tests.common import WebPDecodeMixin, IMAGE_DATA, IMAGE_WIDTH, IMAGE_HEIGHT, \
+    OUTPUT_FILENAME
 
 try:
     import unittest2 as unittest
@@ -39,7 +40,7 @@ except:
     raise
 
 
-class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
+class WebPDecodeTests( WebPDecodeMixin, unittest.TestCase ):
 
     def test_get_info(self):
         """
@@ -124,72 +125,52 @@ class WebPDecodeTests( AbstractWebPDecodeTests, unittest.TestCase ):
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
         self.assertEqual( len(result.u_bitmap),
-                          result.uv_stride * result.width )
+                          int( (IMAGE_WIDTH + 1) / 2) * IMAGE_HEIGHT )
         self.assertEqual( len(result.v_bitmap),
-                          result.uv_stride * result.height )
+                          int( (IMAGE_WIDTH + 1) / 2) * IMAGE_HEIGHT )
+        self.assertEqual( result.uv_stride * IMAGE_HEIGHT,
+                          int( (IMAGE_WIDTH + 1) / 2) * IMAGE_HEIGHT )
 
-
-class WebPImageTests( unittest.TestCase ):
-    """
-    WebPImage tests cases
-    """
-
-    def test_image_types_enum(self):
+    def test_output_RGB(self):
         """
-        Test image types enumerator
+        Export decodeRGB() method result to file
         """
-        self.assertEqual( WebPImage.RGB, 0 )
-        self.assertEqual( WebPImage.RGBA, 1 )
-        self.assertEqual( WebPImage.BGR, 2 )
-        self.assertEqual( WebPImage.BGRA, 3 )
-        self.assertEqual( WebPImage.YUV, 4 )
+        result = self.decoder.decodeRGB( IMAGE_DATA )
+        image  = Image.frombuffer( "RGB",
+                                    (result.width, result.height),
+                                    str(result.bitmap),
+                                    "raw", "RGB", 0, 1 )
+        image.save( OUTPUT_FILENAME.format( "RGB" ) )
 
-    def test_is_valid(self):
+    def test_output_RGBA(self):
         """
-        Test isValid() property
+        Export decodeRGBA() method result to file
         """
-        # Invalid
-        self.assertFalse( WebPImage().isValid )
-        self.assertFalse( WebPImage( IMAGE_DATA ).isValid )
-        self.assertFalse( WebPImage( None, None ).isValid )
-        self.assertFalse( WebPImage( None, None, IMAGE_WIDTH ).isValid )
-        self.assertFalse(
-            WebPImage( None, None, IMAGE_WIDTH, IMAGE_HEIGHT ).isValid )
-        self.assertFalse( WebPImage( None, WebPImage.YUV, 0, 0, None ).isValid )
+        result = self.decoder.decodeRGBA( IMAGE_DATA )
+        image  = Image.frombuffer( "RGBA",
+                                    (result.width, result.height),
+                                    result.bitmap,
+                                    "raw", "RGBA", 0, 1 )
+        image.save( OUTPUT_FILENAME.format( "RGBA" ) )
 
-        # Valid
-        image = WebPImage( IMAGE_DATA,
-                           WebPImage.RGB,
-                           IMAGE_WIDTH,
-                           IMAGE_HEIGHT )
-
-        self.assertTrue( image.isValid )
-        self.assertEqual( image.bitmap, IMAGE_DATA )
-        self.assertEqual( image.format, WebPImage.RGB )
-        self.assertEqual( image.width, IMAGE_WIDTH )
-        self.assertEqual( image.height, IMAGE_HEIGHT )
-
-    def test_is_valid_yuv(self):
+    def test_output_BGR(self):
         """
-        Test isValid() property for YUV format
+        Export decodeBGR() method result to file
         """
-        # Create fake Y and UV bitmaps
-        bitmap      = bytearray( IMAGE_WIDTH * IMAGE_HEIGHT )
-        uv_bitmap   = bytearray( int( IMAGE_WIDTH * IMAGE_HEIGHT / 2 ))
+        result = self.decoder.decodeBGR( IMAGE_DATA )
+        image  = Image.frombuffer( "RGB",
+                                    (result.width, result.height),
+                                    str(result.bitmap),
+                                    "raw", "BGR", 0, 1 )
+        image.save( OUTPUT_FILENAME.format( "BGR" ) )
 
-        # Create image instance
-        image = WebPImage( bitmap,
-                           WebPImage.YUV,
-                           IMAGE_WIDTH, IMAGE_HEIGHT,
-                           u_bitmap=uv_bitmap, v_bitmap=uv_bitmap,
-                           stride=IMAGE_WIDTH, uv_stride=int(IMAGE_WIDTH/2) )
-
-        self.assertTrue( image.isValid )
-        self.assertEqual( image.bitmap, bitmap )
-        self.assertEqual( image.format, WebPImage.YUV )
-        self.assertEqual( image.width, IMAGE_WIDTH )
-        self.assertEqual( image.height, IMAGE_HEIGHT )
-        self.assertEqual( image.u_bitmap, uv_bitmap )
-        self.assertEqual( image.v_bitmap, uv_bitmap )
-        self.assertEqual( image.stride, IMAGE_WIDTH )
-        self.assertEqual( image.uv_stride, int(IMAGE_WIDTH / 2) )
+    def test_output_BGRA(self):
+        """
+        Export decodeBGRA() method result to file
+        """
+        result  = self.decoder.decodeBGRA( IMAGE_DATA )
+        image  = Image.frombuffer( "RGBA",
+                                    (result.width, result.height),
+                                    str(result.bitmap),
+                                    "raw", "BGRA", 0, 1 )
+        image.save( OUTPUT_FILENAME.format( "BGRA" ) )

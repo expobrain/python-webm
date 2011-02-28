@@ -26,19 +26,24 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from webpdecode import WEBPDECODE, WebPDecoder
+from decode import WEBPDECODE, WebPDecoder
 import os
 import sys
 
 
 IMAGE_FILE      = os.path.join( os.path.dirname( __file__ ),
                                 "vancouver2.webp" )
+OUTPUT_FILENAME = os.path.join( os.path.dirname( __file__ ),
+                                "output_{0}.png" )
 IMAGE_DATA      = bytearray( file( IMAGE_FILE, "rb" ).read() )
 IMAGE_WIDTH     = 644
 IMAGE_HEIGHT    = 484
 
 
-class AbstractWebPDecodeTests( object ):
+class WebPDecodeMixin( object ):
+    """
+    Mixin class to help WebPDecode unit tests
+    """
 
     def setUp(self):
         if sys.platform != "win32":

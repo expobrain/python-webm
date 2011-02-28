@@ -17,7 +17,7 @@ package:
 * Windows: NOT SUPPORTED YET
 * Ubuntu 32bit: SUPPORTED (tested on Ubuntu 10.10)
 * Ubuntu 64bit: NOT TESTED YET
-* Mac OS X: SUPPOERTED(tested with Python 64bit on Snow Leopard 10.6.6)
+* Mac OS X: SUPPORTED(tested with Python 64bit on Snow Leopard 10.6.6)
 
 
 Prerequisites
