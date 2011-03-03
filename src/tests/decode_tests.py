@@ -41,12 +41,15 @@ except:
 
 
 class WebPDecodeTests( WebPDecodeMixin, unittest.TestCase ):
+    """
+    WebPDecode test cases
+    """
 
     def test_get_info(self):
         """
         Test the getInfo() method
         """
-        result = self.decoder.getInfo( IMAGE_DATA )
+        result = self.webp_decoder.getInfo( IMAGE_DATA )
 
         self.assertIsInstance( result, tuple )
         self.assertEqual( len( result ), 2 )
@@ -58,13 +61,13 @@ class WebPDecodeTests( WebPDecodeMixin, unittest.TestCase ):
         Test the getInfo() method
         """
         with self.assertRaises( Exception ):
-            self.decoder.getInfo( create_string_buffer(0) )
+            self.webp_decoder.getInfo( create_string_buffer(0) )
 
     def test_decode_RGB(self):
         """
         Test the decodeRGB() method
         """
-        result  = self.decoder.decodeRGB( IMAGE_DATA )
+        result  = self.webp_decoder.decodeRGB( IMAGE_DATA )
         size    = IMAGE_WIDTH * IMAGE_HEIGHT * 3
 
         self.assertIsInstance( result, WebPImage )
@@ -77,7 +80,7 @@ class WebPDecodeTests( WebPDecodeMixin, unittest.TestCase ):
         """
         Test the decodeRGBA() method
         """
-        result  = self.decoder.decodeRGBA( IMAGE_DATA )
+        result  = self.webp_decoder.decodeRGBA( IMAGE_DATA )
         size    = IMAGE_WIDTH * IMAGE_HEIGHT * 4
 
         self.assertIsInstance( result, WebPImage )
@@ -90,7 +93,7 @@ class WebPDecodeTests( WebPDecodeMixin, unittest.TestCase ):
         """
         Test the decodeBGR() method
         """
-        result  = self.decoder.decodeBGR( IMAGE_DATA )
+        result  = self.webp_decoder.decodeBGR( IMAGE_DATA )
         size    = IMAGE_WIDTH * IMAGE_HEIGHT * 3
 
         self.assertIsInstance( result, WebPImage )
@@ -103,7 +106,7 @@ class WebPDecodeTests( WebPDecodeMixin, unittest.TestCase ):
         """
         Test the decodeBGRA() method
         """
-        result  = self.decoder.decodeBGRA( IMAGE_DATA )
+        result  = self.webp_decoder.decodeBGRA( IMAGE_DATA )
         size    = IMAGE_WIDTH * IMAGE_HEIGHT * 4
 
         self.assertIsInstance( result, WebPImage )
@@ -116,7 +119,7 @@ class WebPDecodeTests( WebPDecodeMixin, unittest.TestCase ):
         """
         Test the decodeYUV() method
         """
-        result  = self.decoder.decodeYUV( IMAGE_DATA )
+        result  = self.webp_decoder.decodeYUV( IMAGE_DATA )
         size    = IMAGE_WIDTH * IMAGE_HEIGHT
 
         self.assertIsInstance( result, WebPImage )
@@ -135,7 +138,7 @@ class WebPDecodeTests( WebPDecodeMixin, unittest.TestCase ):
         """
         Export decodeRGB() method result to file
         """
-        result = self.decoder.decodeRGB( IMAGE_DATA )
+        result = self.webp_decoder.decodeRGB( IMAGE_DATA )
         image  = Image.frombuffer( "RGB",
                                     (result.width, result.height),
                                     str(result.bitmap),
@@ -146,7 +149,7 @@ class WebPDecodeTests( WebPDecodeMixin, unittest.TestCase ):
         """
         Export decodeRGBA() method result to file
         """
-        result = self.decoder.decodeRGBA( IMAGE_DATA )
+        result = self.webp_decoder.decodeRGBA( IMAGE_DATA )
         image  = Image.frombuffer( "RGBA",
                                     (result.width, result.height),
                                     result.bitmap,
@@ -157,7 +160,7 @@ class WebPDecodeTests( WebPDecodeMixin, unittest.TestCase ):
         """
         Export decodeBGR() method result to file
         """
-        result = self.decoder.decodeBGR( IMAGE_DATA )
+        result = self.webp_decoder.decodeBGR( IMAGE_DATA )
         image  = Image.frombuffer( "RGB",
                                     (result.width, result.height),
                                     str(result.bitmap),
@@ -168,7 +171,7 @@ class WebPDecodeTests( WebPDecodeMixin, unittest.TestCase ):
         """
         Export decodeBGRA() method result to file
         """
-        result  = self.decoder.decodeBGRA( IMAGE_DATA )
+        result  = self.webp_decoder.decodeBGRA( IMAGE_DATA )
         image  = Image.frombuffer( "RGBA",
                                     (result.width, result.height),
                                     str(result.bitmap),

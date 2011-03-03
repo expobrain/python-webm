@@ -15,9 +15,9 @@ Here a list of platforms with the current support status of the python-webm
 package:
 
 * Windows: NOT SUPPORTED YET
-* Ubuntu 32bit: SUPPORTED (tested on Ubuntu 10.10)
+* Ubuntu 32bit: SUPPORTED (tested with Python 2.6.6 on Ubuntu 10.10)
 * Ubuntu 64bit: NOT TESTED YET
-* Mac OS X: SUPPORTED(tested with Python 64bit on Snow Leopard 10.6.6)
+* Mac OS X: SUPPORTED(tested with Python 2.7.1 64bit on Snow Leopard 10.6.6)
 
 
 Prerequisites
@@ -29,7 +29,7 @@ Below a list of prerequisites to use the python-webm package:
 * Python nose (http://code.google.com/p/python-nose)
 * libvpx from sources (http://www.webmproject.org/code/#webm-repositories)
 * libwebp from sources (http://www.webmproject.org/code/#webp-repositories)
-* Python PIL for some unit tests (http://www.pythonware.com/products/pil)
+* Python PIL (http://www.pythonware.com/products/pil)
 
 Remember to compile and install libwebp after libvpx.
 To compile and/or install every library following the instructions shipped

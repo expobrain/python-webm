@@ -68,7 +68,7 @@ class YuvTests( WebPDecodeMixin, unittest.TestCase ):
         Export decodeYUV() method result to a RGB file
         """
         # Get YUV data and convert to RGB
-        result = self.decoder.decodeYUV( IMAGE_DATA )
+        result = self.webp_decoder.decodeYUV( IMAGE_DATA )
         result = YUVDecoder().YUVtoRGB( result )
 
         # Save image
@@ -83,7 +83,7 @@ class YuvTests( WebPDecodeMixin, unittest.TestCase ):
         Export decodeYUV() method result to a RGBA file
         """
         # Get YUV data and convert to RGB
-        result = self.decoder.decodeYUV( IMAGE_DATA )
+        result = self.webp_decoder.decodeYUV( IMAGE_DATA )
         result = YUVDecoder().YUVtoRGBA( result )
 
         # Save image
@@ -98,7 +98,7 @@ class YuvTests( WebPDecodeMixin, unittest.TestCase ):
         Export decodeYUV() method result to a BGR file
         """
         # Get YUV data and convert to BGR
-        result = self.decoder.decodeYUV( IMAGE_DATA )
+        result = self.webp_decoder.decodeYUV( IMAGE_DATA )
         result = YUVDecoder().YUVtoBGR( result )
 
         # Save image
@@ -113,7 +113,7 @@ class YuvTests( WebPDecodeMixin, unittest.TestCase ):
         Export decodeYUV() method result to a BGRA file
         """
         # Get YUV data and convert to BGRA
-        result = self.decoder.decodeYUV( IMAGE_DATA )
+        result = self.webp_decoder.decodeYUV( IMAGE_DATA )
         result = YUVDecoder().YUVtoBGRA( result )
 
         # Save image
