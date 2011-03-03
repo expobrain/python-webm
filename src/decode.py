@@ -31,7 +31,7 @@ from handlers import WebPImage
 import sys
 
 # Generic constants
-__VERSION__ = "0.1.3beta"
+__VERSION__ = "0.1.3"
 
 
 # Per-OS setup

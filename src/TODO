@@ -1,9 +1,16 @@
-Release 0.1.3
--------------
-
-- Re-organise classes and modules and also unit tests
-
 Release 0.2
 -----------
 
 - Get rid of libwebm module
+
+
+Release 0.2.1
+-------------
+
+- Add encoding functions
+
+
+Release 0.2.x
+-------------
+
+- Fix YUV decoder
