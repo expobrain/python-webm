@@ -26,8 +26,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from handlers import WebPImage
-from tests.common import IMAGE_DATA, IMAGE_WIDTH, IMAGE_HEIGHT
+from webm.handlers import WebPImage
+from webm.tests.common import IMAGE_DATA, IMAGE_WIDTH, IMAGE_HEIGHT
+
 
 try:
     import unittest2 as unittest

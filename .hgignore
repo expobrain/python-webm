@@ -5,4 +5,4 @@ syntax: glob
 *.pyc
 .settings
 .DS_Store
-src/tests/*.png
+src/webm/tests/*.png

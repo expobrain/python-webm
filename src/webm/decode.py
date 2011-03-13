@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Copyright (c) 2011, Daniele Esposti <expo@expobrain.net>
@@ -30,25 +29,22 @@ from ctypes import byref, c_int, c_uint, create_string_buffer, memmove, c_void_p
 from handlers import WebPImage
 import sys
 
-# Generic constants
-__VERSION__ = "0.1.3"
-
 
 # Per-OS setup
 if sys.platform == "win32":
     from ctypes import windll as loader
 
-    LIBRARY = "libwebpdecode.dll"
+    LIBRARY = "libwebp.dll"
 
 elif sys.platform == "linux2":
     from ctypes import cdll as loader
 
-    LIBRARY = "libwebpdecode.so"
+    LIBRARY = "libwebp.so"
 
 elif sys.platform == "darwin":
     from ctypes import cdll as loader
 
-    LIBRARY = "libwebpdecode.dylib"
+    LIBRARY = "libwebp.dylib"
 
 else:
     raise NotImplementedError(

@@ -27,8 +27,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from PIL import Image
-from tests.common import IMAGE_DATA, WebPDecodeMixin, OUTPUT_FILENAME
-from yuv import YUVDecoder
+from webm.tests.common import WebPDecodeMixin, IMAGE_DATA, OUTPUT_FILENAME
+from webm.yuv import YUVDecoder
 
 try:
     import unittest2 as unittest
@@ -47,7 +47,7 @@ class YuvTests( WebPDecodeMixin, unittest.TestCase ):
         """
         Test intialise lookup tables
         """
-        import yuv
+        import webm.yuv as yuv
 
         self.assertEqual( len(yuv.VP8kVToR), 256 )
         self.assertEqual( len(yuv.VP8kUToB), 256 )

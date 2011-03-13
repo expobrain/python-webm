@@ -1,16 +1,5 @@
-Release 0.2
------------
-
-- Get rid of libwebm module
-
-
-Release 0.2.1
+Release 0.1.4
 -------------
 
-- Add encoding functions
-
-
-Release 0.2.x
--------------
-
+- Check if libwebp module can support image encoding
 - Fix YUV decoder

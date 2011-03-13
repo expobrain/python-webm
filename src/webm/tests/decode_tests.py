@@ -28,9 +28,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from PIL import Image
 from ctypes import create_string_buffer
-from handlers import WebPImage
-from tests.common import WebPDecodeMixin, IMAGE_DATA, IMAGE_WIDTH, IMAGE_HEIGHT, \
-    OUTPUT_FILENAME
+from webm.handlers import WebPImage
+from webm.tests.common import WebPDecodeMixin, IMAGE_DATA, IMAGE_WIDTH, \
+    IMAGE_HEIGHT, OUTPUT_FILENAME
 
 try:
     import unittest2 as unittest
