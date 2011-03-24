@@ -25,67 +25,47 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-
-from ctypes import c_int, create_string_buffer, c_float, c_void_p, byref
-import sys
+from PIL import Image
 from webm.handlers import WebPImage
+from webm.tests.common import WebPEncodeMixin, IMAGE_WIDTH, IMAGE_HEIGHT, \
+    PNG_BITMAP_DATA, ENCODE_FILENAME
+
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
+except:
+    raise
 
 
-# Per-OS setup
-if sys.platform == "win32":
-    from ctypes import windll as loader
-
-    LIBRARY = "libwebp.dll"
-
-elif sys.platform == "linux2":
-    from ctypes import cdll as loader
-
-    LIBRARY = "libwebp.so"
-
-elif sys.platform == "darwin":
-    from ctypes import cdll as loader
-
-    LIBRARY = "libwebp.dylib"
-
-else:
-    raise NotImplementedError(
-        "Test non implemented under {0}".format( sys.platform )
-    )
-
-# Load library
-WEBPENCODE = loader.LoadLibrary( LIBRARY )
-
-# Set return types
-WEBPENCODE.WebPEncodeRGB.restype = c_int
-
-
-class WebPEncoder( object ):
+class WebPEncodeTests( WebPEncodeMixin, unittest.TestCase ):
     """
-    Pure Python interface for the Google WebP encode library
+    WebPEncode test cases
     """
 
-    def encodeRGB(self, image, quality=100):
+    def setUp(self):
+        # Call superclass
+        super( WebPEncodeTests, self ).setUp()
+
+        # Create test image
+        self.image = WebPImage( PNG_BITMAP_DATA, WebPImage.RGB,
+                                IMAGE_WIDTH, IMAGE_HEIGHT )
+
+    def test_decode_RGB(self):
         """
-        Encode the given RGB image with the given quality
-
-        :param image: The RGB image
-        :param quality: The encode quality factor
-
-        :type image: WebPImage
-        :type quality: float
+        Test the decodeRGB() method
         """
-        data        = str( image.bitmap )
-        width       = c_int( image.width )
-        height      = c_int( image.height )
-        stride      = c_int( image.width )
-        q_factor    = c_float( 1 )
-        output      = c_void_p()
+        image = self.webp_encoder.encodeRGB( self.image )
 
-        size = WEBPENCODE.WebPEncodeRGB( data,
-                                         width, height, stride,
-                                         q_factor, byref(output) )
+        self.assertIsInstance( image, WebPImage )
+        self.assertEqual( image.format, WebPImage.RGB )
+        self.assertEqual( image.width, IMAGE_WIDTH )
+        self.assertEqual( image.height, IMAGE_HEIGHT )
 
-        if size == 0:
-            raise RuntimeError( "Error during image encoding" )
-        else:
-            return WebPImage( output, WebPImage.RGB, image.width, image.height )
+    def test_output_RGB(self):
+        """
+        Export encodeRGB() method result to file
+        """
+        result = self.webp_encoder.encodeRGB( self.image )
+
+        open( ENCODE_FILENAME.format( "RGB" ), "wb" ).write( result.bitmap )

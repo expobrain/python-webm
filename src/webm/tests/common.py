@@ -26,16 +26,23 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+from PIL import Image
 from webm.decode import WEBPDECODE, WebPDecoder
+from webm.encode import WEBPENCODE, WebPEncoder
 import os
 import sys
 
 
-IMAGE_FILE      = os.path.join( os.path.dirname( __file__ ),
+WEBP_IMAGE_FILE = os.path.join( os.path.dirname( __file__ ),
                                 "vancouver2.webp" )
-OUTPUT_FILENAME = os.path.join( os.path.dirname( __file__ ),
-                                "output_{0}.png" )
-IMAGE_DATA      = bytearray( file( IMAGE_FILE, "rb" ).read() )
+PNG_IMAGE_FILE  = os.path.join( os.path.dirname( __file__ ),
+                                "vancouver2.png" )
+DECODE_FILENAME = os.path.join( os.path.dirname( __file__ ),
+                                "decode_{0}.png" )
+ENCODE_FILENAME = os.path.join( os.path.dirname( __file__ ),
+                                "encode_{0}.webp" )
+WEBP_IMAGE_DATA = bytearray( file( WEBP_IMAGE_FILE, "rb" ).read() )
+PNG_BITMAP_DATA = bytearray( Image.open( PNG_IMAGE_FILE ).tostring() )
 IMAGE_WIDTH     = 644
 IMAGE_HEIGHT    = 484
 
@@ -58,3 +65,23 @@ class WebPDecodeMixin( object ):
 
         # Create decoder instance
         self.webp_decoder = WebPDecoder()
+
+
+class WebPEncodeMixin( object ):
+    """
+    Mixin class to help WebPEncode unit tests
+    """
+
+    def setUp(self):
+        if sys.platform != "win32":
+            from ctypes import CDLL
+
+            self.assertIsInstance( WEBPENCODE, CDLL )
+
+        else:
+            raise NotImplementedError(
+                "Test non implemented under {0}".format( sys.platform )
+            )
+
+        # Create decoder instance
+        self.webp_encoder = WebPEncoder()

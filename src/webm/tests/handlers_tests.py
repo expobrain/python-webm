@@ -27,8 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from webm.handlers import WebPImage
-from webm.tests.common import IMAGE_DATA, IMAGE_WIDTH, IMAGE_HEIGHT
-
+from webm.tests.common import IMAGE_WIDTH, IMAGE_HEIGHT, WEBP_IMAGE_DATA
 
 try:
     import unittest2 as unittest
@@ -59,7 +58,7 @@ class WebPImageTests( unittest.TestCase ):
         """
         # Invalid
         self.assertFalse( WebPImage().isValid )
-        self.assertFalse( WebPImage( IMAGE_DATA ).isValid )
+        self.assertFalse( WebPImage( WEBP_IMAGE_DATA ).isValid )
         self.assertFalse( WebPImage( None, None ).isValid )
         self.assertFalse( WebPImage( None, None, IMAGE_WIDTH ).isValid )
         self.assertFalse(
@@ -67,13 +66,13 @@ class WebPImageTests( unittest.TestCase ):
         self.assertFalse( WebPImage( None, WebPImage.YUV, 0, 0, None ).isValid )
 
         # Valid
-        image = WebPImage( IMAGE_DATA,
+        image = WebPImage( WEBP_IMAGE_DATA,
                            WebPImage.RGB,
                            IMAGE_WIDTH,
                            IMAGE_HEIGHT )
 
         self.assertTrue( image.isValid )
-        self.assertEqual( image.bitmap, IMAGE_DATA )
+        self.assertEqual( image.bitmap, WEBP_IMAGE_DATA )
         self.assertEqual( image.format, WebPImage.RGB )
         self.assertEqual( image.width, IMAGE_WIDTH )
         self.assertEqual( image.height, IMAGE_HEIGHT )

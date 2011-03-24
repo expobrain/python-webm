@@ -5,4 +5,5 @@ syntax: glob
 *.pyc
 .settings
 .DS_Store
-src/webm/tests/*.png
+src/webm/tests/decode_*.png
+src/webm/tests/encode_*.webp
