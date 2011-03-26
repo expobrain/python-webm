@@ -26,9 +26,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from ctypes import c_int, create_string_buffer, c_float, c_void_p, byref
-import sys
+from ctypes import c_int, c_float, c_void_p, byref
 from webm.handlers import WebPImage
+import sys
 
 
 # Per-OS setup
