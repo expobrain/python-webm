@@ -207,29 +207,65 @@ class WebPHandler( object ):
 
     def _get_data(self, source):
         # Check RIFF tag
-        if self._get_tag( source ) != "RIFF":
+        if self._read_tag( source ) != "RIFF":
             raise WebPHandlerError( "Not a RIFF file" )
 
         # Get VP8 chunk
-        length  = self._get_size( source )
+        length  = self._read_size( source )
         source  = StringIO( source.read( length ) )
 
         # Check WEBP and VP8 tag
-        if self._get_tag( source ) != "WEBP":
+        if self._read_tag( source ) != "WEBP":
             raise WebPHandlerError( "WEBP chunk is missing" )
 
-        if self._get_tag( source ) != "VP8 ":
+        if self._read_tag( source ) != "VP8 ":
             raise WebPHandlerError( "VP8 chunk is missing")
 
         # Get data chunk
-        length = self._get_size( source )
+        length = self._read_size( source )
         source = source.read( length )
 
         # End
         return source
 
-    def _get_size(self, source):
+    def _read_size(self, source):
         return struct.unpack( "<L", source.read(4) )[0]
 
-    def _get_tag(self, source):
+    def _read_tag(self, source):
         return struct.unpack( b"<4s", source.read(4) )[0]
+
+    def _write_tag(self, dest, tag):
+        dest.write( struct.pack( "<4s", tag ) )
+
+    def _write_size(self, dest, data):
+        dest.write( struct.pack( "<L", len(data ) ) )
+
+    def _write_data(self, dest, data):
+        dest.write( data )
+
+        if len(data) % 2:
+            dest.write( 0x00 )
+
+    def save(self, filename):
+        # Create VP8 chunk
+        vp8_chunk = StringIO()
+
+        self._write_tag( vp8_chunk, "VP8 " )
+        self._write_size( vp8_chunk, self.data )
+        self._write_data( vp8_chunk, self.data )
+
+        # Create WEBP chunk
+        webp_chunk = StringIO()
+
+        self._write_tag( webp_chunk, "WEBP" )
+        self._write_data( webp_chunk, vp8_chunk.getvalue() )
+
+        # Write file
+        webp_chunk = webp_chunk.getvalue()
+        dest = file( filename, "wb" )
+
+        self._write_tag( dest, "RIFF" )
+        self._write_size( dest, webp_chunk )
+        self._write_data( dest, webp_chunk )
+
+        dest.close()

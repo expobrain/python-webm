@@ -27,8 +27,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from webm.handlers import WebPImage, WebPHandler
-from webm.tests.common import IMAGE_WIDTH, IMAGE_HEIGHT, WEBP_IMAGE_DATA,\
+from webm.tests.common import IMAGE_WIDTH, IMAGE_HEIGHT, WEBP_IMAGE_DATA, \
     WEBP_IMAGE_FILE
+import os
 
 try:
     import unittest2 as unittest
@@ -109,6 +110,9 @@ class WebPHandlerTests( unittest.TestCase ):
     WebPHandler test cases
     """
 
+    TEST_IMAGE_FILE = os.path.join( os.path.dirname( __file__ ),
+                                    "webphandler_{0}.webp" )
+
     def test_load_by_filename(self):
         """
         Test loading a .webp file
@@ -129,3 +133,16 @@ class WebPHandlerTests( unittest.TestCase ):
         self.assertTrue( image.is_valid )
         self.assertEqual( image.width, IMAGE_WIDTH )
         self.assertEqual( image.height, IMAGE_HEIGHT )
+
+    def test_save(self):
+        """
+        Test save to a .webp image
+        """
+        # Save image
+        filename    = self.TEST_IMAGE_FILE.format( "save" )
+        image       = WebPHandler( WEBP_IMAGE_DATA )
+
+        image.save( filename )
+
+        # Check
+        self.assertEqual( file( filename, "rb" ).read(), WEBP_IMAGE_DATA )

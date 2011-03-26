@@ -7,3 +7,4 @@ syntax: glob
 .DS_Store
 src/webm/tests/decode_*.png
 src/webm/tests/encode_*.webp
+src/webm/tests/webphandler_*.webp
