@@ -26,8 +26,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from webm.handlers import WebPImage
-from webm.tests.common import IMAGE_WIDTH, IMAGE_HEIGHT, WEBP_IMAGE_DATA
+from webm.handlers import WebPImage, WebPHandler
+from webm.tests.common import IMAGE_WIDTH, IMAGE_HEIGHT, WEBP_IMAGE_DATA,\
+    WEBP_IMAGE_FILE
 
 try:
     import unittest2 as unittest
@@ -101,3 +102,30 @@ class WebPImageTests( unittest.TestCase ):
         self.assertEqual( image.v_bitmap, uv_bitmap )
         self.assertEqual( image.stride, IMAGE_WIDTH )
         self.assertEqual( image.uv_stride, int(IMAGE_WIDTH / 2) )
+
+
+class WebPHandlerTests( unittest.TestCase ):
+    """
+    WebPHandler test cases
+    """
+
+    def test_load_by_filename(self):
+        """
+        Test loading a .webp file
+        """
+        image = WebPHandler.load( WEBP_IMAGE_FILE )
+
+        self.assertIsInstance( image, WebPHandler )
+        self.assertTrue( image.is_valid )
+        self.assertEqual( image.width, IMAGE_WIDTH )
+        self.assertEqual( image.height, IMAGE_HEIGHT )
+
+    def test_load_by_data(self):
+        """
+        Test loading by file data
+        """
+        image = WebPHandler( WEBP_IMAGE_DATA )
+
+        self.assertTrue( image.is_valid )
+        self.assertEqual( image.width, IMAGE_WIDTH )
+        self.assertEqual( image.height, IMAGE_HEIGHT )

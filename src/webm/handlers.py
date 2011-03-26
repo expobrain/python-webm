@@ -26,6 +26,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+from cStringIO import StringIO
+import struct
+
 
 class WebPImage( object ):
     """
@@ -173,3 +176,60 @@ class WebPImage( object ):
         :rtype: int
         """
         return self._uv_stride
+
+
+class WebPHandlerError( IOError ):
+    pass
+
+
+class WebPHandler( object ):
+    """
+    Contains data relative to an WebP encoded image and allow loading and saving
+    .webp files
+    """
+
+    @staticmethod
+    def load( filename ):
+        return WebPHandler( file( filename, "rb" ) )
+
+    def __init__(self, source):
+        from webm.decode import WebPDecoder
+
+        # Convert data to a file-like object
+        if not hasattr( source, "read" ):
+            source = StringIO( source )
+
+        # Public attributes
+        self.data = self._get_data( source )
+        self.width, self.height = WebPDecoder.getInfo( self.data )
+        self.is_valid = True
+
+
+    def _get_data(self, source):
+        # Check RIFF tag
+        if self._get_tag( source ) != "RIFF":
+            raise WebPHandlerError( "Not a RIFF file" )
+
+        # Get VP8 chunk
+        length  = self._get_size( source )
+        source  = StringIO( source.read( length ) )
+
+        # Check WEBP and VP8 tag
+        if self._get_tag( source ) != "WEBP":
+            raise WebPHandlerError( "WEBP chunk is missing" )
+
+        if self._get_tag( source ) != "VP8 ":
+            raise WebPHandlerError( "VP8 chunk is missing")
+
+        # Get data chunk
+        length = self._get_size( source )
+        source = source.read( length )
+
+        # End
+        return source
+
+    def _get_size(self, source):
+        return struct.unpack( "<L", source.read(4) )[0]
+
+    def _get_tag(self, source):
+        return struct.unpack( b"<4s", source.read(4) )[0]
