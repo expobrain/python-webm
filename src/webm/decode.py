@@ -78,6 +78,28 @@ class WebPDecoder( object ):
     PIXEL_SZ        = 3
     PIXEL_ALPHA_SZ  = 4
 
+    @staticmethod
+    def getInfo(data):
+        """
+        Return the width and the height from the given WebP image data
+
+        :param data: The original WebP image data
+        :type data: bytearray
+        :rtype: tuple(int, int)
+        """
+        width   = c_int(-1)
+        height  = c_int(-1)
+        size    = c_uint( len(data) )
+
+        ret = WEBPDECODE.WebPGetInfo( str(data),
+                                      size,
+                                      byref(width), byref(height) )
+
+        if ret == 0:
+            raise HeaderError
+        else:
+            return ( width.value, height.value )
+
     def _decode(self, data, decode_func, pixel_sz):
         """
         Decode the given WebP image data using given decode and with the given
@@ -112,27 +134,6 @@ class WebPDecoder( object ):
 
         # End
         return ( bytearray(bitmap), width, height )
-
-    def getInfo(self, data):
-        """
-        Return the width and the height from the given WebP image data
-
-        :param data: The original WebP image data
-        :type data: bytearray
-        :rtype: tuple(int, int)
-        """
-        width   = c_int(-1)
-        height  = c_int(-1)
-        size    = c_uint( len(data) )
-
-        ret = WEBPDECODE.WebPGetInfo( str(data),
-                                      size,
-                                      byref(width), byref(height) )
-
-        if ret == 0:
-            raise HeaderError
-        else:
-            return ( width.value, height.value )
 
     def decodeRGB(self, data):
         """
