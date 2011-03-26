@@ -190,9 +190,23 @@ class WebPHandler( object ):
 
     @staticmethod
     def load( filename ):
+        """
+        Load a .webp file and return the WebP handler
+
+        :param filename: The file's name to be loaded
+        :type filename: string
+        :rtype: WebPHandler
+        """
         return WebPHandler( file( filename, "rb" ) )
 
     def __init__(self, source):
+        """
+        Constructor accepts a file-like object or a buffer contains the file's
+        data
+
+        :param source: The image file
+        :type source: buffer|file-like object
+        """
         from webm.decode import WebPDecoder
 
         # Convert data to a file-like object
@@ -200,18 +214,26 @@ class WebPHandler( object ):
             source = StringIO( source )
 
         # Public attributes
-        self.data = self._get_data( source )
+        self.data = self._load_file( source )
         self.width, self.height = WebPDecoder.getInfo( self.data )
-        self.is_valid = True
+        self.is_valid = ( self.width > -1 and self.height > -1 )
 
+    def _load_file(self, source):
+        """
+        Scan file content and return the WebP image data
 
-    def _get_data(self, source):
+        :param source: The file object to be loaded
+        :type source: file-like object
+        :rtype: buffer
+        :raise: WebPHandlerError if the file is not a .webp file or the content
+                is malformed
+        """
         # Check RIFF tag
         if self._read_tag( source ) != "RIFF":
             raise WebPHandlerError( "Not a RIFF file" )
 
         # Get VP8 chunk
-        length  = self._read_size( source )
+        length  = self._read_length( source )
         source  = StringIO( source.read( length ) )
 
         # Check WEBP and VP8 tag
@@ -222,36 +244,84 @@ class WebPHandler( object ):
             raise WebPHandlerError( "VP8 chunk is missing")
 
         # Get data chunk
-        length = self._read_size( source )
+        length = self._read_length( source )
         source = source.read( length )
 
         # End
         return source
 
-    def _read_size(self, source):
+    def _read_length(self, source):
+        """
+        Read the data length from the given source
+
+        :param source: The opened file
+        :type source: file-like object
+        :rtype: int
+        """
         return struct.unpack( "<L", source.read(4) )[0]
 
     def _read_tag(self, source):
+        """
+        Read the chunk tag from the given source
+
+        :param source: The opened file
+        :type source: file-like object
+        :rtype: string
+        """
         return struct.unpack( b"<4s", source.read(4) )[0]
 
     def _write_tag(self, dest, tag):
+        """
+        Write the chunk tag to the given destination
+
+        :param dest: The opened file
+        :param tag: The chunk tag to be written
+
+        :type dest: file-like object
+        :type tag: string
+        """
         dest.write( struct.pack( "<4s", tag ) )
 
-    def _write_size(self, dest, data):
+    def _write_length(self, dest, data):
+        """
+        Write the data length to the given destination
+
+        :param dest: The opened file
+        :param data: The data which the length will be written
+
+        :type dest: file-like object
+        :type data: buffer
+        """
         dest.write( struct.pack( "<L", len(data ) ) )
 
     def _write_data(self, dest, data):
+        """
+        Write the data to the given destination adding a pad byte if the data's
+        length is odd
+
+        :param dest: The opened file
+        :param data: The data which will be written
+
+        :type dest: file-like object
+        :type data: buffer
+        """
         dest.write( data )
 
         if len(data) % 2:
             dest.write( 0x00 )
 
     def save(self, filename):
+        """
+        Save the current content into a .webp file with the given filename
+
+        :param filename: The .webp filename
+        :type filename: string
+        """
         # Create VP8 chunk
         vp8_chunk = StringIO()
 
         self._write_tag( vp8_chunk, "VP8 " )
-        self._write_size( vp8_chunk, self.data )
+        self._write_length( vp8_chunk, self.data )
         self._write_data( vp8_chunk, self.data )
 
         # Create WEBP chunk
@@ -265,7 +335,8 @@ class WebPHandler( object ):
         dest = file( filename, "wb" )
 
         self._write_tag( dest, "RIFF" )
-        self._write_size( dest, webp_chunk )
+        self._write_length( dest, webp_chunk )
         self._write_data( dest, webp_chunk )
 
+        # Close file
         dest.close()
