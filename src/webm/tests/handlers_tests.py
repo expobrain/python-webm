@@ -26,7 +26,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from webm.handlers import WebPImage, WebPHandler
+from webm.handlers import WebPHandler, BitmapHandler
 from webm.tests.common import IMAGE_WIDTH, IMAGE_HEIGHT, WEBP_IMAGE_DATA, \
     WEBP_IMAGE_FILE
 import os
@@ -39,64 +39,64 @@ except:
     raise
 
 
-class WebPImageTests( unittest.TestCase ):
+class BitmapHandlerTests( unittest.TestCase ):
     """
-    WebPImage tests cases
+    BitmapHandler tests cases
     """
 
     def test_image_types_enum(self):
         """
         Test image types enumerator
         """
-        self.assertEqual( WebPImage.RGB, 0 )
-        self.assertEqual( WebPImage.RGBA, 1 )
-        self.assertEqual( WebPImage.BGR, 2 )
-        self.assertEqual( WebPImage.BGRA, 3 )
-        self.assertEqual( WebPImage.YUV, 4 )
+        self.assertEqual( BitmapHandler.RGB, 0 )
+        self.assertEqual( BitmapHandler.RGBA, 1 )
+        self.assertEqual( BitmapHandler.BGR, 2 )
+        self.assertEqual( BitmapHandler.BGRA, 3 )
+        self.assertEqual( BitmapHandler.YUV, 4 )
 
     def test_is_valid(self):
         """
-        Test isValid() property
+        Test is_valid() property
         """
         # Invalid
-        self.assertFalse( WebPImage().isValid )
-        self.assertFalse( WebPImage( WEBP_IMAGE_DATA ).isValid )
-        self.assertFalse( WebPImage( None, None ).isValid )
-        self.assertFalse( WebPImage( None, None, IMAGE_WIDTH ).isValid )
+        self.assertFalse( BitmapHandler().is_valid )
+        self.assertFalse( BitmapHandler( WEBP_IMAGE_DATA ).is_valid )
+        self.assertFalse( BitmapHandler( None, None ).is_valid )
+        self.assertFalse( BitmapHandler( None, None, IMAGE_WIDTH ).is_valid )
         self.assertFalse(
-            WebPImage( None, None, IMAGE_WIDTH, IMAGE_HEIGHT ).isValid )
-        self.assertFalse( WebPImage( None, WebPImage.YUV, 0, 0, None ).isValid )
+            BitmapHandler( None, None, IMAGE_WIDTH, IMAGE_HEIGHT ).is_valid )
+        self.assertFalse( BitmapHandler( None, BitmapHandler.YUV, 0, 0, None ).is_valid )
 
         # Valid
-        image = WebPImage( WEBP_IMAGE_DATA,
-                           WebPImage.RGB,
+        image = BitmapHandler( WEBP_IMAGE_DATA,
+                           BitmapHandler.RGB,
                            IMAGE_WIDTH,
                            IMAGE_HEIGHT )
 
-        self.assertTrue( image.isValid )
+        self.assertTrue( image.is_valid )
         self.assertEqual( image.bitmap, WEBP_IMAGE_DATA )
-        self.assertEqual( image.format, WebPImage.RGB )
+        self.assertEqual( image.format, BitmapHandler.RGB )
         self.assertEqual( image.width, IMAGE_WIDTH )
         self.assertEqual( image.height, IMAGE_HEIGHT )
 
     def test_is_valid_yuv(self):
         """
-        Test isValid() property for YUV format
+        Test is_valid() property for YUV format
         """
         # Create fake Y and UV bitmaps
         bitmap      = bytearray( IMAGE_WIDTH * IMAGE_HEIGHT )
         uv_bitmap   = bytearray( int( IMAGE_WIDTH * IMAGE_HEIGHT / 2 ))
 
         # Create image instance
-        image = WebPImage( bitmap,
-                           WebPImage.YUV,
+        image = BitmapHandler( bitmap,
+                           BitmapHandler.YUV,
                            IMAGE_WIDTH, IMAGE_HEIGHT,
                            u_bitmap=uv_bitmap, v_bitmap=uv_bitmap,
                            stride=IMAGE_WIDTH, uv_stride=int(IMAGE_WIDTH/2) )
 
-        self.assertTrue( image.isValid )
+        self.assertTrue( image.is_valid )
         self.assertEqual( image.bitmap, bitmap )
-        self.assertEqual( image.format, WebPImage.YUV )
+        self.assertEqual( image.format, BitmapHandler.YUV )
         self.assertEqual( image.width, IMAGE_WIDTH )
         self.assertEqual( image.height, IMAGE_HEIGHT )
         self.assertEqual( image.u_bitmap, uv_bitmap )

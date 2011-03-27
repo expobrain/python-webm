@@ -27,7 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from ctypes import c_int, c_float, c_void_p, byref
-from webm.handlers import WebPImage
+from webm.handlers import BitmapHandler
 import sys
 
 
@@ -88,4 +88,5 @@ class WebPEncoder( object ):
         if size == 0:
             raise RuntimeError( "Error during image encoding" )
         else:
-            return WebPImage( output, WebPImage.RGB, image.width, image.height )
+            return BitmapHandler( output, BitmapHandler.RGB,
+                                  image.width, image.height )

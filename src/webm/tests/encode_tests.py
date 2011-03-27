@@ -26,7 +26,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 from PIL import Image
-from webm.handlers import WebPImage
+from webm.handlers import BitmapHandler
 from webm.tests.common import WebPEncodeMixin, IMAGE_WIDTH, IMAGE_HEIGHT, \
     PNG_BITMAP_DATA, ENCODE_FILENAME
 
@@ -48,7 +48,7 @@ class WebPEncodeTests( WebPEncodeMixin, unittest.TestCase ):
         super( WebPEncodeTests, self ).setUp()
 
         # Create test image
-        self.image = WebPImage( PNG_BITMAP_DATA, WebPImage.RGB,
+        self.image = BitmapHandler( PNG_BITMAP_DATA, BitmapHandler.RGB,
                                 IMAGE_WIDTH, IMAGE_HEIGHT )
 
     def test_decode_RGB(self):
@@ -57,8 +57,8 @@ class WebPEncodeTests( WebPEncodeMixin, unittest.TestCase ):
         """
         image = self.webp_encoder.encodeRGB( self.image )
 
-        self.assertIsInstance( image, WebPImage )
-        self.assertEqual( image.format, WebPImage.RGB )
+        self.assertIsInstance( image, BitmapHandler )
+        self.assertEqual( image.format, BitmapHandler.RGB )
         self.assertEqual( image.width, IMAGE_WIDTH )
         self.assertEqual( image.height, IMAGE_HEIGHT )
 

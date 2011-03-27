@@ -26,7 +26,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from ctypes import byref, c_int, c_uint, create_string_buffer, memmove, c_void_p
-from handlers import WebPImage
+from webm.handlers import BitmapHandler
 import sys
 
 
@@ -147,7 +147,7 @@ class WebPDecoder( object ):
                                               WEBPDECODE.WebPDecodeRGB,
                                               self.PIXEL_SZ )
 
-        return WebPImage( bitmap, WebPImage.RGB, width, height )
+        return BitmapHandler( bitmap, BitmapHandler.RGB, width, height )
 
     def decodeBGR(self, data):
         """
@@ -161,7 +161,7 @@ class WebPDecoder( object ):
                                               WEBPDECODE.WebPDecodeBGR,
                                               self.PIXEL_SZ )
 
-        return WebPImage( bitmap, WebPImage.BGR, width, height )
+        return BitmapHandler( bitmap, BitmapHandler.BGR, width, height )
 
     def decodeBGRA(self, data):
         """
@@ -175,7 +175,7 @@ class WebPDecoder( object ):
                                               WEBPDECODE.WebPDecodeBGRA,
                                               self.PIXEL_ALPHA_SZ )
 
-        return WebPImage( bitmap, WebPImage.BGRA, width, height )
+        return BitmapHandler( bitmap, BitmapHandler.BGRA, width, height )
 
     def decodeRGBA(self, data):
         """
@@ -189,7 +189,7 @@ class WebPDecoder( object ):
                                               WEBPDECODE.WebPDecodeRGBA,
                                               self.PIXEL_ALPHA_SZ )
 
-        return WebPImage( bitmap, WebPImage.RGBA, width, height )
+        return BitmapHandler( bitmap, BitmapHandler.RGBA, width, height )
 
     def decodeYUV(self, data):
         """
@@ -237,8 +237,8 @@ class WebPDecoder( object ):
         memmove( v_bitmap, v, uv_size )
 
         # End
-        return WebPImage( bytearray(bitmap),
-                          WebPImage.YUV, width, height,
+        return BitmapHandler( bytearray(bitmap),
+                          BitmapHandler.YUV, width, height,
                           u_bitmap=bytearray(u_bitmap),
                           v_bitmap=bytearray(v_bitmap),
                           stride=stride, uv_stride=uv_stride )

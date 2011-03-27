@@ -30,9 +30,9 @@ from cStringIO import StringIO
 import struct
 
 
-class WebPImage( object ):
+class BitmapHandler( object ):
     """
-    Holds WebP image data and informations
+    Holds decode WebP image data and extra informations
     """
     RGB     = 0
     RGBA    = 1
@@ -75,107 +75,31 @@ class WebPImage( object ):
         :type stride: int
         :type uv_stride: int
         """
-        self._bitmap    = bitmap
-        self._u_bitmap  = u_bitmap
-        self._v_bitmap  = v_bitmap
-        self._stride    = stride
-        self._uv_stride = uv_stride
-        self._format    = format
-        self._width     = width
-        self._height    = height
-        self._is_valid  = ( isinstance( bitmap, bytearray)
-                            and format in self.FORMATS
-                            and width > -1
-                            and height > -1 )
+        self.bitmap    = bitmap
+        self.u_bitmap  = u_bitmap
+        self.v_bitmap  = v_bitmap
+        self.stride    = stride
+        self.uv_stride = uv_stride
+        self.format    = format
+        self.width     = width
+        self.height    = height
+
+        # Check if bitma handler is valid
+        is_valid  = ( isinstance( bitmap, bytearray)
+                      and format in self.FORMATS
+                      and width > -1
+                      and height > -1 )
 
         # Additional setups for YUV image
-        if self._is_valid and format == self.YUV:
+        if is_valid and format == self.YUV:
             # Check if YUV image is valid
-            self._is_valid = ( isinstance( u_bitmap, bytearray )
-                               and isinstance( v_bitmap, bytearray )
-                               and stride > -1
-                               and uv_stride > -1 )
+            is_valid = ( isinstance( u_bitmap, bytearray )
+                         and isinstance( v_bitmap, bytearray )
+                         and stride > -1
+                         and uv_stride > -1 )
 
-    @property
-    def format(self):
-        """
-        Return if the image bitmap format
-
-        :rtype: M{WebPImage.FORMATS}
-        """
-        return self._format
-
-    @property
-    def isValid(self):
-        """
-        Return if the current image bitmap is valid
-
-        :rtype: bool
-        """
-        return self._is_valid
-
-    @property
-    def bitmap(self):
-        """
-        Return the image bitmap data
-
-        :rtype: bool
-        """
-        return self._bitmap
-
-    @property
-    def width(self):
-        """
-        Return the image width
-
-        :rtype: int
-        """
-        return self._width
-
-    @property
-    def height(self):
-        """
-        Return the image height
-
-        :rtype: int
-        """
-        return self._height
-
-    @property
-    def u_bitmap(self):
-        """
-        Return the U chrominance bitmap
-
-        :rtype: bytearray
-        """
-        return self._u_bitmap
-
-    @property
-    def v_bitmap(self):
-        """
-        Return the V chrominance bitmap
-
-        :rtype: bytearray
-        """
-        return self._v_bitmap
-
-    @property
-    def stride(self):
-        """
-        Return the bitmap stride
-
-        :rtype: int
-        """
-        return self._stride
-
-    @property
-    def uv_stride(self):
-        """
-        Return the UV chrominance bitmap stride
-
-        :rtype: int
-        """
-        return self._uv_stride
+        # Set valid flag
+        self.is_valid = is_valid
 
 
 class WebPHandlerError( IOError ):

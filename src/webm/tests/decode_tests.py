@@ -28,7 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from PIL import Image
 from ctypes import create_string_buffer
-from webm.handlers import WebPImage
+from webm.handlers import BitmapHandler
 from webm.tests.common import WebPDecodeMixin, IMAGE_WIDTH, IMAGE_HEIGHT, \
     WEBP_IMAGE_DATA, DECODE_FILENAME
 
@@ -70,9 +70,9 @@ class WebPDecodeTests( WebPDecodeMixin, unittest.TestCase ):
         result  = self.webp_decoder.decodeRGB( WEBP_IMAGE_DATA )
         size    = IMAGE_WIDTH * IMAGE_HEIGHT * 3
 
-        self.assertIsInstance( result, WebPImage )
+        self.assertIsInstance( result, BitmapHandler )
         self.assertEqual( len(result.bitmap), size )
-        self.assertEqual( result.format, WebPImage.RGB )
+        self.assertEqual( result.format, BitmapHandler.RGB )
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
 
@@ -83,9 +83,9 @@ class WebPDecodeTests( WebPDecodeMixin, unittest.TestCase ):
         result  = self.webp_decoder.decodeRGBA( WEBP_IMAGE_DATA )
         size    = IMAGE_WIDTH * IMAGE_HEIGHT * 4
 
-        self.assertIsInstance( result, WebPImage )
+        self.assertIsInstance( result, BitmapHandler )
         self.assertEqual( len(result.bitmap), size )
-        self.assertEqual( result.format, WebPImage.RGBA )
+        self.assertEqual( result.format, BitmapHandler.RGBA )
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
 
@@ -96,9 +96,9 @@ class WebPDecodeTests( WebPDecodeMixin, unittest.TestCase ):
         result  = self.webp_decoder.decodeBGR( WEBP_IMAGE_DATA )
         size    = IMAGE_WIDTH * IMAGE_HEIGHT * 3
 
-        self.assertIsInstance( result, WebPImage )
+        self.assertIsInstance( result, BitmapHandler )
         self.assertEqual( len(result.bitmap), size )
-        self.assertEqual( result.format, WebPImage.BGR )
+        self.assertEqual( result.format, BitmapHandler.BGR )
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
 
@@ -109,9 +109,9 @@ class WebPDecodeTests( WebPDecodeMixin, unittest.TestCase ):
         result  = self.webp_decoder.decodeBGRA( WEBP_IMAGE_DATA )
         size    = IMAGE_WIDTH * IMAGE_HEIGHT * 4
 
-        self.assertIsInstance( result, WebPImage )
+        self.assertIsInstance( result, BitmapHandler )
         self.assertEqual( len(result.bitmap), size )
-        self.assertEqual( result.format, WebPImage.BGRA )
+        self.assertEqual( result.format, BitmapHandler.BGRA )
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
 
@@ -122,9 +122,9 @@ class WebPDecodeTests( WebPDecodeMixin, unittest.TestCase ):
         result  = self.webp_decoder.decodeYUV( WEBP_IMAGE_DATA )
         size    = IMAGE_WIDTH * IMAGE_HEIGHT
 
-        self.assertIsInstance( result, WebPImage )
+        self.assertIsInstance( result, BitmapHandler )
         self.assertEqual( len(result.bitmap), size )
-        self.assertEqual( result.format, WebPImage.YUV )
+        self.assertEqual( result.format, BitmapHandler.YUV )
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
         self.assertEqual( len(result.u_bitmap),

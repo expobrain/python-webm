@@ -26,7 +26,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from handlers import WebPImage
+from handlers import BitmapHandler
 
 
 """
@@ -76,7 +76,7 @@ class YUVDecoder( object ):
         Decode the given image in YUV format to a RGB byte array
 
         :param image: The image in YUV format to be decoded
-        :type image: WebPImage
+        :type image: BitmapHandler
         :rtype: bytearray
         """
         rgb_bitmap = bytearray()
@@ -121,11 +121,11 @@ class YUVDecoder( object ):
         Convert the given WebP image instance from a YUV format to an RGB format
 
         :param image: The WebP image in YUV format
-        :type image: WebPImage
-        :rtype: WebPImage
+        :type image: BitmapHandler
+        :rtype: BitmapHandler
         """
-        return WebPImage( self._decode_YUV_image( image ),
-                          WebPImage.RGB,
+        return BitmapHandler( self._decode_YUV_image( image ),
+                          BitmapHandler.RGB,
                           image.width, image.height )
 
     def YUVtoRGBA(self, image):
@@ -133,8 +133,8 @@ class YUVDecoder( object ):
         Convert the given WebP image instance form YUV format to RGBA format
 
         :param image: The WebP image in YUV format
-        :type image: WebPImage
-        :rtype: WebPImage
+        :type image: BitmapHandler
+        :rtype: BitmapHandler
         """
         rgb_bitmap  = self._decode_YUV_image( image )
         rgba_bitmap = bytearray()
@@ -147,9 +147,9 @@ class YUVDecoder( object ):
             rgba_bitmap.append( rgb_bitmap[i+2] )
             rgba_bitmap.append( 0xff )
 
-        # Return the WebPImage in RGB format
-        return WebPImage( rgba_bitmap,
-                          WebPImage.RGBA,
+        # Return the BitmapHandler in RGB format
+        return BitmapHandler( rgba_bitmap,
+                          BitmapHandler.RGBA,
                           image.width, image.height )
 
     def YUVtoBGR(self, image):
@@ -157,8 +157,8 @@ class YUVDecoder( object ):
         Convert the given WebP image instance form YUV format to BGR format
 
         :param image: The WebP image in YUV format
-        :type image: WebPImage
-        :rtype: WebPImage
+        :type image: BitmapHandler
+        :rtype: BitmapHandler
         """
         rgb_bitmap  = self._decode_YUV_image( image )
         bgr_bitmap = bytearray()
@@ -170,9 +170,9 @@ class YUVDecoder( object ):
             bgr_bitmap.append( rgb_bitmap[i+1] )
             bgr_bitmap.append( rgb_bitmap[i] )
 
-        # Return the WebPImage in BGR format
-        return WebPImage( bgr_bitmap,
-                          WebPImage.BGR,
+        # Return the BitmapHandler in BGR format
+        return BitmapHandler( bgr_bitmap,
+                          BitmapHandler.BGR,
                           image.width, image.height )
 
     def YUVtoBGRA(self, image):
@@ -180,8 +180,8 @@ class YUVDecoder( object ):
         Convert the given WebP image instance form YUV format to BGRA format
 
         :param image: The WebP image in YUV format
-        :type image: WebPImage
-        :rtype: WebPImage
+        :type image: BitmapHandler
+        :rtype: BitmapHandler
         """
         rgb_bitmap  = self._decode_YUV_image( image )
         bgra_bitmap = bytearray()
@@ -194,7 +194,7 @@ class YUVDecoder( object ):
             bgra_bitmap.append( rgb_bitmap[i] )
             bgra_bitmap.append( 0xff )
 
-        # Return the WebPImage in BGRA format
-        return WebPImage( bgra_bitmap,
-                          WebPImage.BGRA,
+        # Return the BitmapHandler in BGRA format
+        return BitmapHandler( bgra_bitmap,
+                          BitmapHandler.BGRA,
                           image.width, image.height )
