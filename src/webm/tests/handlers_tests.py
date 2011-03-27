@@ -123,6 +123,7 @@ class WebPHandlerTests( unittest.TestCase ):
         self.assertTrue( image.is_valid )
         self.assertEqual( image.width, IMAGE_WIDTH )
         self.assertEqual( image.height, IMAGE_HEIGHT )
+        self.assertIsInstance( image.data, bytearray )
 
     def test_load_by_data(self):
         """
@@ -133,6 +134,7 @@ class WebPHandlerTests( unittest.TestCase ):
         self.assertTrue( image.is_valid )
         self.assertEqual( image.width, IMAGE_WIDTH )
         self.assertEqual( image.height, IMAGE_HEIGHT )
+        self.assertIsInstance( image.data, bytearray )
 
     def test_save(self):
         """

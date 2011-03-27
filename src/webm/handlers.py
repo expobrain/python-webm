@@ -185,7 +185,17 @@ class WebPHandlerError( IOError ):
 class WebPHandler( object ):
     """
     Contains data relative to an WebP encoded image and allow loading and saving
-    .webp files
+    .webp files.
+
+    The code is base on the documentation at
+    http://code.google.com/speed/webp/docs/riff_container.html
+
+    Public properties:
+
+    * data        The WebP encoded image data
+    * width       The image's width, -1 if the image s not valid
+    * height      The image's height, -1 if the image s not valid
+    * is_valid    True if the image's data is valid else False
     """
 
     @staticmethod
@@ -245,7 +255,7 @@ class WebPHandler( object ):
 
         # Get data chunk
         length = self._read_length( source )
-        source = source.read( length )
+        source = bytearray( source.read( length ) )
 
         # End
         return source
@@ -305,7 +315,7 @@ class WebPHandler( object ):
         :type dest: file-like object
         :type data: buffer
         """
-        dest.write( data )
+        dest.write( str(data) )
 
         if len(data) % 2:
             dest.write( 0x00 )
