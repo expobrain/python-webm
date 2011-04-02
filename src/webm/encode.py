@@ -95,3 +95,33 @@ class WebPEncoder( object ):
             memmove( output, output_p, size )
 
             return WebPHandler( bytearray(output), image.width, image.height )
+
+    def encodeRGBA(self, image, quality=100):
+        """
+        Encode the given RGBA image with the given quality
+
+        :param image: The RGBA image
+        :param quality: The encode quality factor
+
+        :type image: BitmapHandler
+        :type quality: float
+        """
+        data        = str( image.bitmap )
+        width       = c_int( image.width )
+        height      = c_int( image.height )
+        stride      = c_int( image.stride )
+        q_factor    = c_float( 100 )
+        output_p    = c_void_p()
+
+        size = WEBPENCODE.WebPEncodeRGBA( data,
+                                          width, height, stride,
+                                          q_factor, byref(output_p) )
+
+        if size == 0:
+            raise RuntimeError( "Error during image encoding" )
+        else:
+            output = create_string_buffer( size )
+
+            memmove( output, output_p, size )
+
+            return WebPHandler( bytearray(output), image.width, image.height )

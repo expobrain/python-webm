@@ -26,9 +26,6 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from cStringIO import StringIO
-import struct
-
 
 class BitmapHandler( object ):
     """
@@ -106,74 +103,6 @@ class WebPHandlerError( IOError ):
     pass
 
 
-class RiffWrite( object ):
-
-    @staticmethod
-    def read_length(source):
-        """
-        Read the data length from the given source
-
-        :param source: The opened file
-        :type source: file-like object
-        :rtype: int
-        """
-        return struct.unpack( "<L", source.read(4) )[0]
-
-    @staticmethod
-    def read_tag(source):
-        """
-        Read the chunk tag from the given source
-
-        :param source: The opened file
-        :type source: file-like object
-        :rtype: string
-        """
-        return struct.unpack( b"<4s", source.read(4) )[0]
-
-    @staticmethod
-    def write_tag(dest, tag):
-        """
-        Write the chunk tag to the given destination
-
-        :param dest: The opened file
-        :param tag: The chunk tag to be written
-
-        :type dest: file-like object
-        :type tag: string
-        """
-        dest.write( struct.pack( "<4s", tag ) )
-
-    @staticmethod
-    def write_length(dest, data):
-        """
-        Write the data length to the given destination
-
-        :param dest: The opened file
-        :param data: The data which the length will be written
-
-        :type dest: file-like object
-        :type data: buffer
-        """
-        dest.write( struct.pack( "<L", len(data ) ) )
-
-    @staticmethod
-    def write_data(dest, data):
-        """
-        Write the data to the given destination adding a pad byte if the data's
-        length is odd
-
-        :param dest: The opened file
-        :param data: The data which will be written
-
-        :type dest: file-like object
-        :type data: buffer
-        """
-        dest.write( str(data) )
-
-        if len(data) % 2:
-            dest.write( 0x00 )
-
-
 class WebPHandler( object ):
     """
     Contains data relative to an WebP encoded image and allow loading and saving
@@ -199,42 +128,14 @@ class WebPHandler( object ):
         :type filename: string
         :rtype: WebPHandler
         """
-        return WebPHandler.from_stream( file( filename, "rb" ) )
-
-    @staticmethod
-    def from_stream( stream ):
-        """
-        Create a WebP handler from a file-like object
-
-        :param stream: The file-like stream
-        :type stream: file-like object
-        :rtype: WebPHandler
-        """
         from webm.decode import WebPDecoder
 
-        # Check RIFF tag
-        if RiffWrite.read_tag( stream ) != "RIFF":
-            raise WebPHandlerError( "Not a RIFF file" )
+        data = file( filename, "rb" ).read()
+        width, height = WebPDecoder.getInfo( data )
 
-        # Get VP8 chunk
-        length  = RiffWrite.read_length( stream )
-        source  = StringIO( stream.read( length ) )
+        return WebPHandler( bytearray(data), width, height )
 
-        # Check WEBP and VP8 tag
-        if RiffWrite.read_tag( source ) != "WEBP":
-            raise WebPHandlerError( "WEBP chunk is missing" )
-
-        if RiffWrite.read_tag( source ) != "VP8 ":
-            raise WebPHandlerError( "VP8 chunk is missing")
-
-        # Get data chunk
-        length  = RiffWrite.read_length( source )
-        data    = bytearray( source.read( length ) )
-
-        # Create WebP handler
-        return WebPHandler( data, *WebPDecoder.getInfo( data ) )
-
-    def __init__(self, data=None, width=1, height=1):
+    def __init__(self, data=None, width=-1, height=-1):
         """
         Constructor accepts the data, width and height of the WebP encoded image
 
@@ -250,33 +151,6 @@ class WebPHandler( object ):
         self.data   = data
         self.width  = width
         self.height = height
-
-    def to_stream(self, stream):
-        """
-        Save the current image into the given sream as a .webp image format
-
-        :param stream: The destination stream
-        :type stream: file-like object
-        """
-        # Create VP8 chunk
-        vp8_chunk = StringIO()
-
-        RiffWrite.write_tag( vp8_chunk, "VP8 " )
-        RiffWrite.write_length( vp8_chunk, self.data )
-        RiffWrite.write_data( vp8_chunk, self.data )
-
-        # Create WEBP chunk
-        webp_chunk = StringIO()
-
-        RiffWrite.write_tag( webp_chunk, "WEBP" )
-        RiffWrite.write_data( webp_chunk, vp8_chunk.getvalue() )
-
-        # Write file
-        webp_chunk = webp_chunk.getvalue()
-
-        RiffWrite.write_tag( stream, "RIFF" )
-        RiffWrite.write_length( stream, webp_chunk )
-        RiffWrite.write_data( stream, webp_chunk )
 
     @property
     def is_valid(self):

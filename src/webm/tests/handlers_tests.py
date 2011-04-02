@@ -124,30 +124,3 @@ class WebPHandlerTests( unittest.TestCase ):
         self.assertEqual( image.width, IMAGE_WIDTH )
         self.assertEqual( image.height, IMAGE_HEIGHT )
         self.assertIsInstance( image.data, bytearray )
-
-    def test_load_by_data(self):
-        """
-        Test loading by data
-        """
-        image = WebPHandler.from_stream( StringIO( WEBP_IMAGE_DATA ) )
-
-        self.assertTrue( image.is_valid )
-        self.assertEqual( image.width, IMAGE_WIDTH )
-        self.assertEqual( image.height, IMAGE_HEIGHT )
-        self.assertIsInstance( image.data, bytearray )
-
-    def test_save(self):
-        """
-        Test save to a .webp image
-        """
-        # Save image
-        filename    = self.TEST_IMAGE_FILE.format( "save" )
-        image       = WebPHandler.from_stream( StringIO( WEBP_IMAGE_DATA ) )
-        stream      = file( filename, "wb" )
-
-        image.to_stream( stream )
-
-        stream.close()
-
-        # Check
-        self.assertEqual( file( filename, "rb" ).read(), WEBP_IMAGE_DATA )

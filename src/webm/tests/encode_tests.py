@@ -45,29 +45,57 @@ class WebPEncodeTests( WebPEncodeMixin, unittest.TestCase ):
     WebPEncode test cases
     """
 
-    def setUp(self):
-        # Call superclass
-        super( WebPEncodeTests, self ).setUp()
-
-        # Create test image
-        self.image = BitmapHandler( PNG_BITMAP_DATA, BitmapHandler.RGB,
-                                    IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 3 )
-
     def test_encode_RGB(self):
         """
         Test the encodeRGB() method
         """
-        image = self.webp_encoder.encodeRGB( self.image )
+        image = BitmapHandler( PNG_BITMAP_DATA, BitmapHandler.RGB,
+                               IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 3 )
+        result = self.webp_encoder.encodeRGB( image )
 
-        self.assertIsInstance( image, WebPHandler )
-        self.assertEqual( image.width, IMAGE_WIDTH )
-        self.assertEqual( image.height, IMAGE_HEIGHT )
+        self.assertIsInstance( result, WebPHandler )
+        self.assertEqual( result.width, IMAGE_WIDTH )
+        self.assertEqual( result.height, IMAGE_HEIGHT )
+
+    def test_encode_RGBA(self):
+        """
+        Test the encodeRGBA() method
+        """
+        image = BitmapHandler( PNG_BITMAP_DATA, BitmapHandler.RGB,
+                               IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 3 )
+        result = self.webp_encoder.encodeRGB( image )
+
+        self.assertIsInstance( result, WebPHandler )
+        self.assertEqual( result.width, IMAGE_WIDTH )
+        self.assertEqual( result.height, IMAGE_HEIGHT )
 
     def test_output_RGB(self):
         """
         Export encodeRGB() method result to file
         """
-        result = self.webp_encoder.encodeRGB( self.image )
-        stream = file( ENCODE_FILENAME.format( "RGB" ), "wb" )
+        image = BitmapHandler( PNG_BITMAP_DATA, BitmapHandler.RGB,
+                               IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 3 )
+        result = self.webp_encoder.encodeRGB( image )
 
-        result.to_stream( stream )
+        file( ENCODE_FILENAME.format( "RGB" ), "wb" ).write( result.data )
+
+    def test_output_RGBA(self):
+        """
+        Export encodeRGBA() method result to file
+        """
+        # Convert to RGBA
+        size = IMAGE_WIDTH * IMAGE_HEIGHT
+        bitmap = bytearray( size * 4 )
+
+        for i in xrange( size ):
+            bitmap[ i * 4 ]     = PNG_BITMAP_DATA[ i * 3 ]
+            bitmap[ i * 4 + 1 ] = PNG_BITMAP_DATA[ i * 3 + 1 ]
+            bitmap[ i * 4 + 2 ] = PNG_BITMAP_DATA[ i * 3 + 2 ]
+
+        image = BitmapHandler( bitmap, BitmapHandler.RGBA,
+                               IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 4 )
+
+        # Save image
+        result = self.webp_encoder.encodeRGBA( image )
+
+        file( ENCODE_FILENAME.format( "RGBA" ), "wb" ).write( result.data )
