@@ -26,6 +26,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+from cStringIO import StringIO
 from webm.handlers import WebPHandler, BitmapHandler
 from webm.tests.common import IMAGE_WIDTH, IMAGE_HEIGHT, WEBP_IMAGE_DATA, \
     WEBP_IMAGE_FILE
@@ -59,19 +60,18 @@ class BitmapHandlerTests( unittest.TestCase ):
         Test is_valid() property
         """
         # Invalid
-        self.assertFalse( BitmapHandler().is_valid )
-        self.assertFalse( BitmapHandler( WEBP_IMAGE_DATA ).is_valid )
-        self.assertFalse( BitmapHandler( None, None ).is_valid )
-        self.assertFalse( BitmapHandler( None, None, IMAGE_WIDTH ).is_valid )
         self.assertFalse(
-            BitmapHandler( None, None, IMAGE_WIDTH, IMAGE_HEIGHT ).is_valid )
-        self.assertFalse( BitmapHandler( None, BitmapHandler.YUV, 0, 0, None ).is_valid )
+            BitmapHandler( None, None, IMAGE_WIDTH, IMAGE_HEIGHT, -1 ).is_valid
+        )
+        self.assertFalse( BitmapHandler( None, None, -1, -1, -1 ).is_valid )
+        self.assertFalse(
+            BitmapHandler( None, BitmapHandler.YUV, 0, 0, None ).is_valid
+        )
 
         # Valid
         image = BitmapHandler( WEBP_IMAGE_DATA,
-                           BitmapHandler.RGB,
-                           IMAGE_WIDTH,
-                           IMAGE_HEIGHT )
+                               BitmapHandler.RGB,
+                               IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 3 )
 
         self.assertTrue( image.is_valid )
         self.assertEqual( image.bitmap, WEBP_IMAGE_DATA )
@@ -117,7 +117,7 @@ class WebPHandlerTests( unittest.TestCase ):
         """
         Test loading a .webp file
         """
-        image = WebPHandler.load( WEBP_IMAGE_FILE )
+        image = WebPHandler.from_file( WEBP_IMAGE_FILE )
 
         self.assertIsInstance( image, WebPHandler )
         self.assertTrue( image.is_valid )
@@ -127,9 +127,9 @@ class WebPHandlerTests( unittest.TestCase ):
 
     def test_load_by_data(self):
         """
-        Test loading by file data
+        Test loading by data
         """
-        image = WebPHandler( WEBP_IMAGE_DATA )
+        image = WebPHandler.from_stream( StringIO( WEBP_IMAGE_DATA ) )
 
         self.assertTrue( image.is_valid )
         self.assertEqual( image.width, IMAGE_WIDTH )
@@ -142,9 +142,12 @@ class WebPHandlerTests( unittest.TestCase ):
         """
         # Save image
         filename    = self.TEST_IMAGE_FILE.format( "save" )
-        image       = WebPHandler( WEBP_IMAGE_DATA )
+        image       = WebPHandler.from_stream( StringIO( WEBP_IMAGE_DATA ) )
+        stream      = file( filename, "wb" )
 
-        image.save( filename )
+        image.to_stream( stream )
+
+        stream.close()
 
         # Check
         self.assertEqual( file( filename, "rb" ).read(), WEBP_IMAGE_DATA )

@@ -25,10 +25,12 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
+
 from PIL import Image
-from webm.handlers import BitmapHandler
+from webm.handlers import BitmapHandler, WebPHandler
 from webm.tests.common import WebPEncodeMixin, IMAGE_WIDTH, IMAGE_HEIGHT, \
     PNG_BITMAP_DATA, ENCODE_FILENAME
+from webm.decode import WebPDecoder
 
 try:
     import unittest2 as unittest
@@ -49,16 +51,15 @@ class WebPEncodeTests( WebPEncodeMixin, unittest.TestCase ):
 
         # Create test image
         self.image = BitmapHandler( PNG_BITMAP_DATA, BitmapHandler.RGB,
-                                IMAGE_WIDTH, IMAGE_HEIGHT )
+                                    IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 3 )
 
-    def test_decode_RGB(self):
+    def test_encode_RGB(self):
         """
-        Test the decodeRGB() method
+        Test the encodeRGB() method
         """
         image = self.webp_encoder.encodeRGB( self.image )
 
-        self.assertIsInstance( image, BitmapHandler )
-        self.assertEqual( image.format, BitmapHandler.RGB )
+        self.assertIsInstance( image, WebPHandler )
         self.assertEqual( image.width, IMAGE_WIDTH )
         self.assertEqual( image.height, IMAGE_HEIGHT )
 
@@ -67,5 +68,6 @@ class WebPEncodeTests( WebPEncodeMixin, unittest.TestCase ):
         Export encodeRGB() method result to file
         """
         result = self.webp_encoder.encodeRGB( self.image )
+        stream = file( ENCODE_FILENAME.format( "RGB" ), "wb" )
 
-        open( ENCODE_FILENAME.format( "RGB" ), "wb" ).write( result.bitmap )
+        result.to_stream( stream )

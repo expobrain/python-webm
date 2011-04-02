@@ -26,8 +26,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from ctypes import c_int, c_float, c_void_p, byref
-from webm.handlers import BitmapHandler
+from ctypes import c_int, c_float, c_void_p, byref, memmove, \
+    create_string_buffer, POINTER, c_uint8
+from webm.handlers import WebPHandler
 import sys
 
 
@@ -56,6 +57,7 @@ else:
 WEBPENCODE = loader.LoadLibrary( LIBRARY )
 
 # Set return types
+WEBPENCODE.WebPEncodeRGB.argtypes = [ c_void_p, c_int, c_int, c_int, c_float, c_void_p ]
 WEBPENCODE.WebPEncodeRGB.restype = c_int
 
 
@@ -71,22 +73,25 @@ class WebPEncoder( object ):
         :param image: The RGB image
         :param quality: The encode quality factor
 
-        :type image: WebPImage
+        :type image: BitmapHandler
         :type quality: float
         """
         data        = str( image.bitmap )
         width       = c_int( image.width )
         height      = c_int( image.height )
-        stride      = c_int( image.width )
-        q_factor    = c_float( 1 )
-        output      = c_void_p()
+        stride      = c_int( image.stride )
+        q_factor    = c_float( 100 )
+        output_p    = c_void_p()
 
         size = WEBPENCODE.WebPEncodeRGB( data,
                                          width, height, stride,
-                                         q_factor, byref(output) )
+                                         q_factor, byref(output_p) )
 
         if size == 0:
             raise RuntimeError( "Error during image encoding" )
         else:
-            return BitmapHandler( output, BitmapHandler.RGB,
-                                  image.width, image.height )
+            output = create_string_buffer( size )
+
+            memmove( output, output_p, size )
+
+            return WebPHandler( bytearray(output), image.width, image.height )

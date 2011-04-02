@@ -68,52 +68,60 @@ class WebPDecodeTests( WebPDecodeMixin, unittest.TestCase ):
         Test the decodeRGB() method
         """
         result  = self.webp_decoder.decodeRGB( WEBP_IMAGE_DATA )
-        size    = IMAGE_WIDTH * IMAGE_HEIGHT * 3
+        stride  = IMAGE_WIDTH * 3
+        size    = stride * IMAGE_HEIGHT
 
         self.assertIsInstance( result, BitmapHandler )
         self.assertEqual( len(result.bitmap), size )
         self.assertEqual( result.format, BitmapHandler.RGB )
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
+        self.assertEqual( result.stride, stride )
 
     def test_decode_RGBA(self):
         """
         Test the decodeRGBA() method
         """
         result  = self.webp_decoder.decodeRGBA( WEBP_IMAGE_DATA )
-        size    = IMAGE_WIDTH * IMAGE_HEIGHT * 4
+        stride  = IMAGE_WIDTH * 4
+        size    = stride * IMAGE_HEIGHT
 
         self.assertIsInstance( result, BitmapHandler )
         self.assertEqual( len(result.bitmap), size )
         self.assertEqual( result.format, BitmapHandler.RGBA )
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
+        self.assertEqual( result.stride, stride )
 
     def test_decode_BGR(self):
         """
         Test the decodeBGR() method
         """
         result  = self.webp_decoder.decodeBGR( WEBP_IMAGE_DATA )
-        size    = IMAGE_WIDTH * IMAGE_HEIGHT * 3
+        stride  = IMAGE_WIDTH * 3
+        size    = stride * IMAGE_HEIGHT
 
         self.assertIsInstance( result, BitmapHandler )
         self.assertEqual( len(result.bitmap), size )
         self.assertEqual( result.format, BitmapHandler.BGR )
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
+        self.assertEqual( result.stride, stride )
 
     def test_decode_BGRA(self):
         """
         Test the decodeBGRA() method
         """
         result  = self.webp_decoder.decodeBGRA( WEBP_IMAGE_DATA )
-        size    = IMAGE_WIDTH * IMAGE_HEIGHT * 4
+        stride  = IMAGE_WIDTH * 4
+        size    = stride * IMAGE_HEIGHT
 
         self.assertIsInstance( result, BitmapHandler )
         self.assertEqual( len(result.bitmap), size )
         self.assertEqual( result.format, BitmapHandler.BGRA )
         self.assertEqual( result.width, IMAGE_WIDTH )
         self.assertEqual( result.height, IMAGE_HEIGHT )
+        self.assertEqual( result.stride, stride )
 
     def test_decode_YUV(self):
         """

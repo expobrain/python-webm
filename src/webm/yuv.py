@@ -125,8 +125,8 @@ class YUVDecoder( object ):
         :rtype: BitmapHandler
         """
         return BitmapHandler( self._decode_YUV_image( image ),
-                          BitmapHandler.RGB,
-                          image.width, image.height )
+                              BitmapHandler.RGB,
+                              image.width, image.height, image.width * 3 )
 
     def YUVtoRGBA(self, image):
         """
@@ -149,8 +149,8 @@ class YUVDecoder( object ):
 
         # Return the BitmapHandler in RGB format
         return BitmapHandler( rgba_bitmap,
-                          BitmapHandler.RGBA,
-                          image.width, image.height )
+                              BitmapHandler.RGBA,
+                              image.width, image.height, image.width * 4 )
 
     def YUVtoBGR(self, image):
         """
@@ -172,8 +172,8 @@ class YUVDecoder( object ):
 
         # Return the BitmapHandler in BGR format
         return BitmapHandler( bgr_bitmap,
-                          BitmapHandler.BGR,
-                          image.width, image.height )
+                              BitmapHandler.BGR,
+                              image.width, image.height, image.width * 3 )
 
     def YUVtoBGRA(self, image):
         """
@@ -196,5 +196,5 @@ class YUVDecoder( object ):
 
         # Return the BitmapHandler in BGRA format
         return BitmapHandler( bgra_bitmap,
-                          BitmapHandler.BGRA,
-                          image.width, image.height )
+                              BitmapHandler.BGRA,
+                              image.width, image.height, image.width * 4 )

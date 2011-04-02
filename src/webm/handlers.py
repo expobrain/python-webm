@@ -42,8 +42,8 @@ class BitmapHandler( object ):
 
     FORMATS = ( RGB, RGBA, BGR, BGRA, YUV )
 
-    def __init__(self, bitmap=None, format=None, width=-1, height=-1,
-                 u_bitmap=None, v_bitmap=None, stride=-1, uv_stride=-1 ):
+    def __init__(self, bitmap, format, width, height, stride,
+                 u_bitmap=None, v_bitmap=None, uv_stride=-1 ):
         """
         Constructor accepts the decode image data as a bitmap and its
         width/height.
@@ -106,6 +106,74 @@ class WebPHandlerError( IOError ):
     pass
 
 
+class RiffWrite( object ):
+
+    @staticmethod
+    def read_length(source):
+        """
+        Read the data length from the given source
+
+        :param source: The opened file
+        :type source: file-like object
+        :rtype: int
+        """
+        return struct.unpack( "<L", source.read(4) )[0]
+
+    @staticmethod
+    def read_tag(source):
+        """
+        Read the chunk tag from the given source
+
+        :param source: The opened file
+        :type source: file-like object
+        :rtype: string
+        """
+        return struct.unpack( b"<4s", source.read(4) )[0]
+
+    @staticmethod
+    def write_tag(dest, tag):
+        """
+        Write the chunk tag to the given destination
+
+        :param dest: The opened file
+        :param tag: The chunk tag to be written
+
+        :type dest: file-like object
+        :type tag: string
+        """
+        dest.write( struct.pack( "<4s", tag ) )
+
+    @staticmethod
+    def write_length(dest, data):
+        """
+        Write the data length to the given destination
+
+        :param dest: The opened file
+        :param data: The data which the length will be written
+
+        :type dest: file-like object
+        :type data: buffer
+        """
+        dest.write( struct.pack( "<L", len(data ) ) )
+
+    @staticmethod
+    def write_data(dest, data):
+        """
+        Write the data to the given destination adding a pad byte if the data's
+        length is odd
+
+        :param dest: The opened file
+        :param data: The data which will be written
+
+        :type dest: file-like object
+        :type data: buffer
+        """
+        dest.write( str(data) )
+
+        if len(data) % 2:
+            dest.write( 0x00 )
+
+
 class WebPHandler( object ):
     """
     Contains data relative to an WebP encoded image and allow loading and saving
@@ -123,7 +191,7 @@ class WebPHandler( object ):
     """
 
     @staticmethod
-    def load( filename ):
+    def from_file( filename ):
         """
         Load a .webp file and return the WebP handler
 
@@ -131,146 +199,90 @@ class WebPHandler( object ):
         :type filename: string
         :rtype: WebPHandler
         """
-        return WebPHandler( file( filename, "rb" ) )
+        return WebPHandler.from_stream( file( filename, "rb" ) )
 
-    def __init__(self, source):
+    @staticmethod
+    def from_stream( stream ):
         """
-        Constructor accepts a file-like object or a buffer contains the file's
-        data
+        Create a WebP handler from a file-like object
 
-        :param source: The image file
-        :type source: buffer|file-like object
+        :param stream: The file-like stream
+        :type stream: file-like object
+        :rtype: WebPHandler
         """
         from webm.decode import WebPDecoder
 
-        # Convert data to a file-like object
-        if not hasattr( source, "read" ):
-            source = StringIO( source )
-
-        # Public attributes
-        self.data = self._load_file( source )
-        self.width, self.height = WebPDecoder.getInfo( self.data )
-        self.is_valid = ( self.width > -1 and self.height > -1 )
-
-    def _load_file(self, source):
-        """
-        Scan file content and return the WebP image data
-
-        :param source: The file object to be loaded
-        :type source: file-like object
-        :rtype: buffer
-        :raise: WebPHandlerError if the file is not a .webp file or the content
-                is malformed
-        """
         # Check RIFF tag
-        if self._read_tag( source ) != "RIFF":
+        if RiffWrite.read_tag( stream ) != "RIFF":
             raise WebPHandlerError( "Not a RIFF file" )
 
         # Get VP8 chunk
-        length  = self._read_length( source )
-        source  = StringIO( source.read( length ) )
+        length  = RiffWrite.read_length( stream )
+        source  = StringIO( stream.read( length ) )
 
         # Check WEBP and VP8 tag
-        if self._read_tag( source ) != "WEBP":
+        if RiffWrite.read_tag( source ) != "WEBP":
             raise WebPHandlerError( "WEBP chunk is missing" )
 
-        if self._read_tag( source ) != "VP8 ":
+        if RiffWrite.read_tag( source ) != "VP8 ":
             raise WebPHandlerError( "VP8 chunk is missing")
 
         # Get data chunk
-        length = self._read_length( source )
-        source = bytearray( source.read( length ) )
+        length  = RiffWrite.read_length( source )
+        data    = bytearray( source.read( length ) )
 
-        # End
-        return source
+        # Create WebP handler
+        return WebPHandler( data, *WebPDecoder.getInfo( data ) )
 
-    def _read_length(self, source):
+    def __init__(self, data=None, width=1, height=1):
         """
-        Read the data length from the given source
+        Constructor accepts the data, width and height of the WebP encoded image
 
-        :param source: The opened file
-        :type source: file-like object
-        :rtype: int
+        :param source: The image encoded data
+        :param width: The image's width
+        :param height: The image's height
+
+        :type data: bytearray
+        :type width: int
+        :type height: int
         """
-        return struct.unpack( "<L", source.read(4) )[0]
+        # Public attributes
+        self.data   = data
+        self.width  = width
+        self.height = height
 
-    def _read_tag(self, source):
+    def to_stream(self, stream):
         """
-        Read the chunk tag from the given source
+        Save the current image into the given sream as a .webp image format
 
-        :param source: The opened file
-        :type source: file-like object
-        :rtype: string
-        """
-        return struct.unpack( b"<4s", source.read(4) )[0]
-
-    def _write_tag(self, dest, tag):
-        """
-        Write the chunk tag to the given destination
-
-        :param dest: The opened file
-        :param tag: The chunk tag to be written
-
-        :type dest: file-like object
-        :type tag: string
-        """
-        dest.write( struct.pack( "<4s", tag ) )
-
-    def _write_length(self, dest, data):
-        """
-        Write the data length to the given destination
-
-        :param dest: The opened file
-        :param data: The data which the length will be written
-
-        :type dest: file-like object
-        :type data: buffer
-        """
-        dest.write( struct.pack( "<L", len(data ) ) )
-
-    def _write_data(self, dest, data):
-        """
-        Write the data to the given destination adding a pad byte if the data's
-        length is odd
-
-        :param dest: The opened file
-        :param data: The data which will be written
-
-        :type dest: file-like object
-        :type data: buffer
-        """
-        dest.write( str(data) )
-
-        if len(data) % 2:
-            dest.write( 0x00 )
-
-    def save(self, filename):
-        """
-        Save the current content into a .webp file with the given filename
-
-        :param filename: The .webp filename
-        :type filename: string
+        :param stream: The destination stream
+        :type stream: file-like object
         """
         # Create VP8 chunk
         vp8_chunk = StringIO()
 
-        self._write_tag( vp8_chunk, "VP8 " )
-        self._write_length( vp8_chunk, self.data )
-        self._write_data( vp8_chunk, self.data )
+        RiffWrite.write_tag( vp8_chunk, "VP8 " )
+        RiffWrite.write_length( vp8_chunk, self.data )
+        RiffWrite.write_data( vp8_chunk, self.data )
 
         # Create WEBP chunk
         webp_chunk = StringIO()
 
-        self._write_tag( webp_chunk, "WEBP" )
-        self._write_data( webp_chunk, vp8_chunk.getvalue() )
+        RiffWrite.write_tag( webp_chunk, "WEBP" )
+        RiffWrite.write_data( webp_chunk, vp8_chunk.getvalue() )
 
         # Write file
         webp_chunk = webp_chunk.getvalue()
-        dest = file( filename, "wb" )
 
-        self._write_tag( dest, "RIFF" )
-        self._write_length( dest, webp_chunk )
-        self._write_data( dest, webp_chunk )
+        RiffWrite.write_tag( stream, "RIFF" )
+        RiffWrite.write_length( stream, webp_chunk )
+        RiffWrite.write_data( stream, webp_chunk )
 
-        # Close file
-        dest.close()
+    @property
+    def is_valid(self):
+        """
+        Returns True if the current image is valid
+
+        :rtype: bool
+        """
+        return self.data != None and ( self.width > -1 and self.height > -1 )

@@ -147,7 +147,8 @@ class WebPDecoder( object ):
                                               WEBPDECODE.WebPDecodeRGB,
                                               self.PIXEL_SZ )
 
-        return BitmapHandler( bitmap, BitmapHandler.RGB, width, height )
+        return BitmapHandler( bitmap, BitmapHandler.RGB,
+                              width, height, self.PIXEL_SZ * width )
 
     def decodeBGR(self, data):
         """
@@ -161,7 +162,8 @@ class WebPDecoder( object ):
                                               WEBPDECODE.WebPDecodeBGR,
                                               self.PIXEL_SZ )
 
-        return BitmapHandler( bitmap, BitmapHandler.BGR, width, height )
+        return BitmapHandler( bitmap, BitmapHandler.BGR,
+                              width, height, self.PIXEL_SZ * width )
 
     def decodeBGRA(self, data):
         """
@@ -175,7 +177,8 @@ class WebPDecoder( object ):
                                               WEBPDECODE.WebPDecodeBGRA,
                                               self.PIXEL_ALPHA_SZ )
 
-        return BitmapHandler( bitmap, BitmapHandler.BGRA, width, height )
+        return BitmapHandler( bitmap, BitmapHandler.BGRA,
+                              width, height, self.PIXEL_ALPHA_SZ * width )
 
     def decodeRGBA(self, data):
         """
@@ -189,7 +192,8 @@ class WebPDecoder( object ):
                                               WEBPDECODE.WebPDecodeRGBA,
                                               self.PIXEL_ALPHA_SZ )
 
-        return BitmapHandler( bitmap, BitmapHandler.RGBA, width, height )
+        return BitmapHandler( bitmap, BitmapHandler.RGBA,
+                              width, height, self.PIXEL_ALPHA_SZ * width )
 
     def decodeYUV(self, data):
         """
@@ -238,7 +242,7 @@ class WebPDecoder( object ):
 
         # End
         return BitmapHandler( bytearray(bitmap),
-                          BitmapHandler.YUV, width, height,
-                          u_bitmap=bytearray(u_bitmap),
-                          v_bitmap=bytearray(v_bitmap),
-                          stride=stride, uv_stride=uv_stride )
+                              BitmapHandler.YUV, width, height, stride,
+                              u_bitmap=bytearray(u_bitmap),
+                              v_bitmap=bytearray(v_bitmap),
+                              uv_stride=uv_stride )
