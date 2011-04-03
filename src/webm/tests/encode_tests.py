@@ -30,7 +30,6 @@ from PIL import Image
 from webm.handlers import BitmapHandler, WebPHandler
 from webm.tests.common import WebPEncodeMixin, IMAGE_WIDTH, IMAGE_HEIGHT, \
     PNG_BITMAP_DATA, ENCODE_FILENAME
-from webm.decode import WebPDecoder
 
 try:
     import unittest2 as unittest

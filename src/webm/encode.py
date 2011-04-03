@@ -27,7 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from ctypes import c_int, c_float, c_void_p, byref, memmove, \
-    create_string_buffer, POINTER, c_uint8
+    create_string_buffer
 from webm.handlers import WebPHandler
 import sys
 

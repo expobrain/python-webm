@@ -26,7 +26,6 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from cStringIO import StringIO
 from webm.handlers import WebPHandler, BitmapHandler
 from webm.tests.common import IMAGE_WIDTH, IMAGE_HEIGHT, WEBP_IMAGE_DATA, \
     WEBP_IMAGE_FILE
