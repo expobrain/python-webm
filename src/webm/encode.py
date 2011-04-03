@@ -57,14 +57,56 @@ else:
 WEBPENCODE = loader.LoadLibrary( LIBRARY )
 
 # Set return types
-WEBPENCODE.WebPEncodeRGB.argtypes = [ c_void_p, c_int, c_int, c_int, c_float, c_void_p ]
-WEBPENCODE.WebPEncodeRGB.restype = c_int
+WEBPENCODE.WebPEncodeRGB.argtypes   = [ c_void_p, c_int, c_int, c_int, c_float,
+                                        c_void_p ]
+WEBPENCODE.WebPEncodeBGR.argtypes   = [ c_void_p, c_int, c_int, c_int, c_float,
+                                        c_void_p ]
+WEBPENCODE.WebPEncodeRGBA.argtypes  = [ c_void_p, c_int, c_int, c_int, c_float,
+                                        c_void_p ]
+WEBPENCODE.WebPEncodeBGRA.argtypes  = [ c_void_p, c_int, c_int, c_int, c_float,
+                                        c_void_p ]
+
+WEBPENCODE.WebPEncodeRGB.restype    = c_int
+WEBPENCODE.WebPEncodeBGR.restype    = c_int
+WEBPENCODE.WebPEncodeRGBA.restype   = c_int
+WEBPENCODE.WebPEncodeBGRA.restype   = c_int
 
 
 class WebPEncoder( object ):
     """
     Pure Python interface for the Google WebP encode library
     """
+
+    def _encode(self, func, image, quality):
+        """
+        Encode the image with the given quality using the given encoding
+        function
+
+        :param func: The encoding function
+        :param image: The image to be encoded
+        :param quality: The encode quality factor
+
+        :type function: function
+        :type image: BitmapHandler
+        :type quality: float
+        """
+        data        = str( image.bitmap )
+        width       = c_int( image.width )
+        height      = c_int( image.height )
+        stride      = c_int( image.stride )
+        q_factor    = c_float( quality )
+        output_p    = c_void_p()
+
+        size = func( data, width, height, stride, q_factor, byref(output_p) )
+
+        if size == 0:
+            raise RuntimeError( "Error during image encoding" )
+        else:
+            output = create_string_buffer( size )
+
+            memmove( output, output_p, size )
+
+            return WebPHandler( bytearray(output), image.width, image.height )
 
     def encodeRGB(self, image, quality=100):
         """
@@ -76,25 +118,7 @@ class WebPEncoder( object ):
         :type image: BitmapHandler
         :type quality: float
         """
-        data        = str( image.bitmap )
-        width       = c_int( image.width )
-        height      = c_int( image.height )
-        stride      = c_int( image.stride )
-        q_factor    = c_float( 100 )
-        output_p    = c_void_p()
-
-        size = WEBPENCODE.WebPEncodeRGB( data,
-                                         width, height, stride,
-                                         q_factor, byref(output_p) )
-
-        if size == 0:
-            raise RuntimeError( "Error during image encoding" )
-        else:
-            output = create_string_buffer( size )
-
-            memmove( output, output_p, size )
-
-            return WebPHandler( bytearray(output), image.width, image.height )
+        return self._encode( WEBPENCODE.WebPEncodeRGB, image, quality )
 
     def encodeRGBA(self, image, quality=100):
         """
@@ -106,22 +130,28 @@ class WebPEncoder( object ):
         :type image: BitmapHandler
         :type quality: float
         """
-        data        = str( image.bitmap )
-        width       = c_int( image.width )
-        height      = c_int( image.height )
-        stride      = c_int( image.stride )
-        q_factor    = c_float( 100 )
-        output_p    = c_void_p()
+        return self._encode( WEBPENCODE.WebPEncodeRGBA, image, quality )
 
-        size = WEBPENCODE.WebPEncodeRGBA( data,
-                                          width, height, stride,
-                                          q_factor, byref(output_p) )
+    def encodeBGRA(self, image, quality=100):
+        """
+        Encode the given BGRA image with the given quality
 
-        if size == 0:
-            raise RuntimeError( "Error during image encoding" )
-        else:
-            output = create_string_buffer( size )
+        :param image: The BGRA image
+        :param quality: The encode quality factor
 
-            memmove( output, output_p, size )
+        :type image: BitmapHandler
+        :type quality: float
+        """
+        return self._encode( WEBPENCODE.WebPEncodeBGRA, image, quality )
 
-            return WebPHandler( bytearray(output), image.width, image.height )
+    def encodeBGR(self, image, quality=100):
+        """
+        Encode the given BGR image with the given quality
+
+        :param image: The BGR image
+        :param quality: The encode quality factor
+
+        :type image: BitmapHandler
+        :type quality: float
+        """
+        return self._encode( WEBPENCODE.WebPEncodeBGR, image, quality )
