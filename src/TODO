@@ -1,5 +1,4 @@
-Release 0.1.4
+Release 0.1.5
 -------------
 
-- Check if libwebp module can support image encoding
 - Fix YUV decoder
