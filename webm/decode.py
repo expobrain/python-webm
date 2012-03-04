@@ -36,6 +36,8 @@ _LIBRARY.WebPDecodeRGB.argtypes = [c_void_p, c_uint, c_void_p, c_void_p]
 _LIBRARY.WebPDecodeRGBA.argtypes = [c_void_p, c_uint, c_void_p, c_void_p]
 _LIBRARY.WebPDecodeBGR.argtypes = [c_void_p, c_uint, c_void_p, c_void_p]
 _LIBRARY.WebPDecodeBGRA.argtypes = [c_void_p, c_uint, c_void_p, c_void_p]
+_LIBRARY.WebPDecodeYUV.argtypes = [c_void_p, c_uint, c_void_p, c_void_p,
+                                   c_void_p, c_void_p, c_void_p, c_void_p]
 _LIBRARY.WebPGetInfo.argtypes = [c_void_p, c_uint, c_void_p, c_void_p]
 
 # Set return types
@@ -192,19 +194,18 @@ class WebPDecoder(object):
         # Prepare parameters
         width = c_int(-1)
         height = c_int(-1)
-        size = c_uint(len(data))
+        size = len(data)
         u = create_string_buffer(0)
         v = create_string_buffer(0)
         stride = c_int(-1)
         uv_stride = c_int(-1)
 
         # Decode image an return pointer to decoded data
-        bitmap_p = _LIBRARY.WebPDecodeYUV(str(data),
-                                             size,
-                                             byref(width), byref(height),
-                                             u, v,
-#                                             byref(u), byref(v),
-                                             byref(stride), byref(uv_stride))
+        bitmap_p = _LIBRARY.WebPDecodeYUV(
+            str(data), size, byref(width), byref(height), u, v,
+#            byref(u), byref(v),
+            byref(stride), byref(uv_stride)
+        )
 
         # Convert data to Python types
         width = width.value
@@ -227,8 +228,9 @@ class WebPDecoder(object):
         memmove(v_bitmap, v, uv_size)
 
         # End
-        return BitmapHandler(bytearray(bitmap),
-                              BitmapHandler.YUV, width, height, stride,
-                              u_bitmap=bytearray(u_bitmap),
-                              v_bitmap=bytearray(v_bitmap),
-                              uv_stride=uv_stride)
+        return BitmapHandler(
+            bytearray(bitmap), BitmapHandler.YUV, width, height, stride,
+            u_bitmap=bytearray(u_bitmap),
+            v_bitmap=bytearray(v_bitmap),
+            uv_stride=uv_stride
+        )
