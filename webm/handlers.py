@@ -27,20 +27,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 
-class BitmapHandler( object ):
+class BitmapHandler(object):
     """
     Holds decode WebP image data and extra informations
     """
-    RGB     = 0
-    RGBA    = 1
-    BGR     = 2
-    BGRA    = 3
-    YUV     = 4
+    RGB = 0
+    RGBA = 1
+    BGR = 2
+    BGRA = 3
+    YUV = 4
 
-    FORMATS = ( RGB, RGBA, BGR, BGRA, YUV )
+    FORMATS = (RGB, RGBA, BGR, BGRA, YUV)
 
     def __init__(self, bitmap, format, width, height, stride,
-                 u_bitmap=None, v_bitmap=None, uv_stride=-1 ):
+                 u_bitmap=None, v_bitmap=None, uv_stride= -1):
         """
         Constructor accepts the decode image data as a bitmap and its
         width/height.
@@ -72,38 +72,38 @@ class BitmapHandler( object ):
         :type stride: int
         :type uv_stride: int
         """
-        self.bitmap    = bitmap
-        self.u_bitmap  = u_bitmap
-        self.v_bitmap  = v_bitmap
-        self.stride    = stride
+        self.bitmap = bitmap
+        self.u_bitmap = u_bitmap
+        self.v_bitmap = v_bitmap
+        self.stride = stride
         self.uv_stride = uv_stride
-        self.format    = format
-        self.width     = width
-        self.height    = height
+        self.format = format
+        self.width = width
+        self.height = height
 
         # Check if bitma handler is valid
-        is_valid  = ( isinstance( bitmap, bytearray)
+        is_valid = (isinstance(bitmap, bytearray)
                       and format in self.FORMATS
                       and width > -1
-                      and height > -1 )
+                      and height > -1)
 
         # Additional setups for YUV image
         if is_valid and format == self.YUV:
             # Check if YUV image is valid
-            is_valid = ( isinstance( u_bitmap, bytearray )
-                         and isinstance( v_bitmap, bytearray )
+            is_valid = (isinstance(u_bitmap, bytearray)
+                         and isinstance(v_bitmap, bytearray)
                          and stride > -1
-                         and uv_stride > -1 )
+                         and uv_stride > -1)
 
         # Set valid flag
         self.is_valid = is_valid
 
 
-class WebPHandlerError( IOError ):
+class WebPHandlerError(IOError):
     pass
 
 
-class WebPHandler( object ):
+class WebPHandler(object):
     """
     Contains data relative to an WebP encoded image and allow loading and saving
     .webp files.
@@ -120,7 +120,7 @@ class WebPHandler( object ):
     """
 
     @staticmethod
-    def from_file( filename ):
+    def from_file(filename):
         """
         Load a .webp file and return the WebP handler
 
@@ -130,12 +130,12 @@ class WebPHandler( object ):
         """
         from webm.decode import WebPDecoder
 
-        data = file( filename, "rb" ).read()
-        width, height = WebPDecoder.getInfo( data )
+        data = file(filename, "rb").read()
+        width, height = WebPDecoder.getInfo(data)
 
-        return WebPHandler( bytearray(data), width, height )
+        return WebPHandler(bytearray(data), width, height)
 
-    def __init__(self, data=None, width=-1, height=-1):
+    def __init__(self, data=None, width= -1, height= -1):
         """
         Constructor accepts the data, width and height of the WebP encoded image
 
@@ -148,8 +148,8 @@ class WebPHandler( object ):
         :type height: int
         """
         # Public attributes
-        self.data   = data
-        self.width  = width
+        self.data = data
+        self.width = width
         self.height = height
 
     @property
@@ -159,4 +159,4 @@ class WebPHandler( object ):
 
         :rtype: bool
         """
-        return self.data != None and ( self.width > -1 and self.height > -1 )
+        return self.data != None and (self.width > -1 and self.height > -1)
