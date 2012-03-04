@@ -38,10 +38,12 @@ the instructions shipped within.
 Usage
 -----
 
-At the moment only decode functions are implemented. To use those function
-create a new instance of WebPDecoder() class and call its methods with the
-required arguments and keywords. Read the docstrings to know about what type of
-arguments and keywords are required and what type of result is returned.
+Decode and encode functions are defined int the respective webm.decode and
+web.encode modules.
+
+Functions to convert YUV images to RGB[A]/BGR[A] are available in the webm.yuv
+module. At the moment the result image is in greyscale format due to a
+uncompleted conversion algorithm.
 
 
 Unit testing
