@@ -29,7 +29,7 @@ import sys
 
 
 # Generic constants
-__VERSION__ = "0.1.4beta"
+__VERSION__ = "0.2.0"
 
 PIXEL_SZ = 3
 PIXEL_ALPHA_SZ = 4
