@@ -35,15 +35,15 @@ third_party/libwebp/yuv.c and /third_party/libwebp/yuv.h files for the original
 source code.
 """
 
-YUV_FIX         = 16            # fixed-point precision
-YUV_RANGE_MIN   = -227          # min value of r/g/b output
-YUV_RANGE_MAX   = 256 + 226     # max value of r/g/b output
-YUV_HALF        = 1 << (YUV_FIX - 1)
-VP8kVToR        = [0] * 256
-VP8kUToB        = [0] * 256
-VP8kVToG        = [0] * 256
-VP8kUToG        = [0] * 256
-VP8kClip        = [0] * (YUV_RANGE_MAX - YUV_RANGE_MIN);
+YUV_FIX = 16            # fixed-point precision
+YUV_RANGE_MIN = -227          # min value of r/g/b output
+YUV_RANGE_MAX = 256 + 226     # max value of r/g/b output
+YUV_HALF = 1 << (YUV_FIX - 1)
+VP8kVToR = [0] * 256
+VP8kUToB = [0] * 256
+VP8kVToG = [0] * 256
+VP8kUToG = [0] * 256
+VP8kClip = [0] * (YUV_RANGE_MAX - YUV_RANGE_MIN);
 
 
 def _init_yuv_module():
@@ -56,7 +56,7 @@ def _init_yuv_module():
         VP8kVToG[i] = -45773 * (i - 128)
         VP8kUToB[i] = (113618 * (i - 128) + YUV_HALF) >> YUV_FIX
 
-    for i in xrange( YUV_RANGE_MIN, YUV_RANGE_MAX ):
+    for i in xrange(YUV_RANGE_MIN, YUV_RANGE_MAX):
         k = ((i - 16) * 76283 + YUV_HALF) >> YUV_FIX
         k = 0 if k < 0 else 255 if k > 255 else k
 
@@ -66,7 +66,7 @@ def _init_yuv_module():
 _init_yuv_module()
 
 
-class YUVDecoder( object ):
+class YUVDecoder(object):
     """
     Decodes YUV data to different formats
     """
@@ -81,8 +81,8 @@ class YUVDecoder( object ):
         """
         rgb_bitmap = bytearray()
 
-        for h in xrange( image.height ):
-            for w in xrange( image.width ):
+        for h in xrange(image.height):
+            for w in xrange(image.width):
                 # Get luma
                 i = h * image.stride + w
                 y = image.bitmap[i]
@@ -92,7 +92,7 @@ class YUVDecoder( object ):
                 # grayscale image from the YUV data.
                 # Remove this when the correct YUV to color RGB function is
                 # found.
-                rgb_bitmap.extend(( y, y, y ))
+                rgb_bitmap.extend((y, y, y))
 
 #                # Get chrominance
 #                i = h * image.uv_stride + int(w/2)
@@ -124,9 +124,9 @@ class YUVDecoder( object ):
         :type image: BitmapHandler
         :rtype: BitmapHandler
         """
-        return BitmapHandler( self._decode_YUV_image( image ),
+        return BitmapHandler(self._decode_YUV_image(image),
                               BitmapHandler.RGB,
-                              image.width, image.height, image.width * 3 )
+                              image.width, image.height, image.width * 3)
 
     def YUVtoRGBA(self, image):
         """
@@ -136,21 +136,21 @@ class YUVDecoder( object ):
         :type image: BitmapHandler
         :rtype: BitmapHandler
         """
-        rgb_bitmap  = self._decode_YUV_image( image )
+        rgb_bitmap = self._decode_YUV_image(image)
         rgba_bitmap = bytearray()
 
-        for i in xrange( len(rgb_bitmap) / 3 ):
+        for i in xrange(len(rgb_bitmap) / 3):
             i *= 3
 
-            rgba_bitmap.append( rgb_bitmap[i] )
-            rgba_bitmap.append( rgb_bitmap[i+1] )
-            rgba_bitmap.append( rgb_bitmap[i+2] )
-            rgba_bitmap.append( 0xff )
+            rgba_bitmap.append(rgb_bitmap[i])
+            rgba_bitmap.append(rgb_bitmap[i + 1])
+            rgba_bitmap.append(rgb_bitmap[i + 2])
+            rgba_bitmap.append(0xff)
 
         # Return the BitmapHandler in RGB format
-        return BitmapHandler( rgba_bitmap,
+        return BitmapHandler(rgba_bitmap,
                               BitmapHandler.RGBA,
-                              image.width, image.height, image.width * 4 )
+                              image.width, image.height, image.width * 4)
 
     def YUVtoBGR(self, image):
         """
@@ -160,20 +160,20 @@ class YUVDecoder( object ):
         :type image: BitmapHandler
         :rtype: BitmapHandler
         """
-        rgb_bitmap  = self._decode_YUV_image( image )
+        rgb_bitmap = self._decode_YUV_image(image)
         bgr_bitmap = bytearray()
 
-        for i in xrange( len(rgb_bitmap) / 3 ):
+        for i in xrange(len(rgb_bitmap) / 3):
             i *= 3
 
-            bgr_bitmap.append( rgb_bitmap[i+2] )
-            bgr_bitmap.append( rgb_bitmap[i+1] )
-            bgr_bitmap.append( rgb_bitmap[i] )
+            bgr_bitmap.append(rgb_bitmap[i + 2])
+            bgr_bitmap.append(rgb_bitmap[i + 1])
+            bgr_bitmap.append(rgb_bitmap[i])
 
         # Return the BitmapHandler in BGR format
-        return BitmapHandler( bgr_bitmap,
+        return BitmapHandler(bgr_bitmap,
                               BitmapHandler.BGR,
-                              image.width, image.height, image.width * 3 )
+                              image.width, image.height, image.width * 3)
 
     def YUVtoBGRA(self, image):
         """
@@ -183,18 +183,18 @@ class YUVDecoder( object ):
         :type image: BitmapHandler
         :rtype: BitmapHandler
         """
-        rgb_bitmap  = self._decode_YUV_image( image )
+        rgb_bitmap = self._decode_YUV_image(image)
         bgra_bitmap = bytearray()
 
-        for i in xrange( len(rgb_bitmap) / 3 ):
+        for i in xrange(len(rgb_bitmap) / 3):
             i *= 3
 
-            bgra_bitmap.append( rgb_bitmap[i+2] )
-            bgra_bitmap.append( rgb_bitmap[i+1] )
-            bgra_bitmap.append( rgb_bitmap[i] )
-            bgra_bitmap.append( 0xff )
+            bgra_bitmap.append(rgb_bitmap[i + 2])
+            bgra_bitmap.append(rgb_bitmap[i + 1])
+            bgra_bitmap.append(rgb_bitmap[i])
+            bgra_bitmap.append(0xff)
 
         # Return the BitmapHandler in BGRA format
-        return BitmapHandler( bgra_bitmap,
+        return BitmapHandler(bgra_bitmap,
                               BitmapHandler.BGRA,
-                              image.width, image.height, image.width * 4 )
+                              image.width, image.height, image.width * 4)
