@@ -27,21 +27,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from ctypes import (c_int, c_float, c_void_p, byref, memmove,
-    create_string_buffer)
+    create_string_buffer, POINTER)
 from webm import _LIBRARY
 from webm.handlers import WebPHandler
 
 
-# Set return types
-_LIBRARY.WebPEncodeRGB.argtypes = [ c_void_p, c_int, c_int, c_int, c_float,
-                                        c_void_p ]
-_LIBRARY.WebPEncodeBGR.argtypes = [ c_void_p, c_int, c_int, c_int, c_float,
-                                        c_void_p ]
-_LIBRARY.WebPEncodeRGBA.argtypes = [ c_void_p, c_int, c_int, c_int, c_float,
-                                        c_void_p ]
-_LIBRARY.WebPEncodeBGRA.argtypes = [ c_void_p, c_int, c_int, c_int, c_float,
-                                        c_void_p ]
+# Set argument types
+_LIBRARY.WebPEncodeRGB.argtypes = [c_void_p, c_int, c_int, c_int,
+                                   c_float, c_void_p]
+_LIBRARY.WebPEncodeBGR.argtypes = [c_void_p, c_int, c_int, c_int, c_float,
+                                   c_void_p]
+_LIBRARY.WebPEncodeRGBA.argtypes = [c_void_p, c_int, c_int, c_int, c_float,
+                                    c_void_p]
+_LIBRARY.WebPEncodeBGRA.argtypes = [c_void_p, c_int, c_int, c_int, c_float,
+                                    c_void_p]
 
+# Set return types
 _LIBRARY.WebPEncodeRGB.restype = c_int
 _LIBRARY.WebPEncodeBGR.restype = c_int
 _LIBRARY.WebPEncodeRGBA.restype = c_int
@@ -66,6 +67,7 @@ class WebPEncoder(object):
         :type image: BitmapHandler
         :type quality: float
         """
+        # Call encode function
         data = str(image.bitmap)
         width = c_int(image.width)
         height = c_int(image.height)
@@ -75,14 +77,16 @@ class WebPEncoder(object):
 
         size = func(data, width, height, stride, q_factor, byref(output_p))
 
+        # Check return size
         if size == 0:
             raise RuntimeError("Error during image encoding")
-        else:
-            output = create_string_buffer(size)
 
-            memmove(output, output_p, size)
+        # Convert output
+        output = create_string_buffer(size)
 
-            return WebPHandler(bytearray(output), image.width, image.height)
+        memmove(output, output_p, size)
+
+        return WebPHandler(bytearray(output), image.width, image.height)
 
     def encodeRGB(self, image, quality=100):
         """
