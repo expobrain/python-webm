@@ -26,19 +26,27 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from ctypes import (byref, c_int, c_uint, create_string_buffer, memmove,
-    c_void_p)
+    c_void_p, POINTER)
 from webm import _LIBRARY
 from webm.handlers import BitmapHandler
 
 
 # Set function parameter types
-_LIBRARY.WebPDecodeRGB.argtypes = [c_void_p, c_uint, c_void_p, c_void_p]
-_LIBRARY.WebPDecodeRGBA.argtypes = [c_void_p, c_uint, c_void_p, c_void_p]
-_LIBRARY.WebPDecodeBGR.argtypes = [c_void_p, c_uint, c_void_p, c_void_p]
-_LIBRARY.WebPDecodeBGRA.argtypes = [c_void_p, c_uint, c_void_p, c_void_p]
-_LIBRARY.WebPDecodeYUV.argtypes = [c_void_p, c_uint, c_void_p, c_void_p,
-                                   c_void_p, c_void_p, c_void_p, c_void_p]
-_LIBRARY.WebPGetInfo.argtypes = [c_void_p, c_uint, c_void_p, c_void_p]
+_LIBRARY.WebPDecodeRGB.argtypes = [c_void_p, c_uint,
+                                   POINTER(c_int), POINTER(c_int)]  # w, h
+_LIBRARY.WebPDecodeRGBA.argtypes = [c_void_p, c_uint,
+                                    POINTER(c_int), POINTER(c_int)]  # w, h
+_LIBRARY.WebPDecodeBGR.argtypes = [c_void_p, c_uint,
+                                   POINTER(c_int), POINTER(c_int)]  # w, h
+_LIBRARY.WebPDecodeBGRA.argtypes = [c_void_p, c_uint,
+                                   POINTER(c_int), POINTER(c_int)]  # w, h
+_LIBRARY.WebPDecodeYUV.argtypes = [c_void_p, c_uint,
+                                   POINTER(c_int), POINTER(c_int),  # w, h
+                                   c_void_p, c_void_p,  # u, v
+                                   POINTER(c_int),  # stride
+                                   POINTER(c_int)]  # uv_stride
+_LIBRARY.WebPGetInfo.argtypes = [c_void_p, c_uint,
+                                 POINTER(c_int), POINTER(c_int)]  # w, h
 
 # Set return types
 _LIBRARY.WebPDecodeRGB.restype = c_void_p
@@ -78,8 +86,7 @@ class WebPDecoder(object):
         height = c_int(-1)
         size = len(data)
 
-        ret = _LIBRARY.WebPGetInfo(
-            str(data), size, byref(width), byref(height))
+        ret = _LIBRARY.WebPGetInfo(str(data), size, width, height)
 
         # Check return code
         if ret == 0:
@@ -110,7 +117,7 @@ class WebPDecoder(object):
         size = len(data)
 
         # Decode image an return pointer to decoded data
-        bitmap_p = decode_func(str(data), size, byref(width), byref(height))
+        bitmap_p = decode_func(str(data), size, width, height)
 
         # Copy decoded data into a buffer
         width = width.value
@@ -202,9 +209,9 @@ class WebPDecoder(object):
 
         # Decode image an return pointer to decoded data
         bitmap_p = _LIBRARY.WebPDecodeYUV(
-            str(data), size, byref(width), byref(height), u, v,
-#            byref(u), byref(v),
-            byref(stride), byref(uv_stride)
+            str(data), size, width, height, u, v,
+#            u, v,
+            stride, uv_stride
         )
 
         # Convert data to Python types
