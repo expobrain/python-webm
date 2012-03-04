@@ -27,9 +27,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from PIL import Image
 from ctypes import create_string_buffer
+from webm import decode
 from webm.handlers import BitmapHandler
-from webm.tests.common import (WebPDecodeMixin, IMAGE_WIDTH, IMAGE_HEIGHT,
-    WEBP_IMAGE_DATA, DECODE_FILENAME)
+from webm.tests.common import (IMAGE_WIDTH, IMAGE_HEIGHT, WEBP_IMAGE_DATA,
+    DECODE_FILENAME)
 
 try:
     import unittest2 as unittest
@@ -37,16 +38,16 @@ except ImportError:
     import unittest
 
 
-class WebPDecodeTests(WebPDecodeMixin, unittest.TestCase):
+class WebPDecodeTests(unittest.TestCase):
     """
     WebPDecode test cases
     """
 
     def test_get_info(self):
         """
-        Test the getInfo() method
+        Test the GetInfo() method
         """
-        result = self.webp_decoder.getInfo(WEBP_IMAGE_DATA)
+        result = decode.GetInfo(WEBP_IMAGE_DATA)
 
         self.assertIsInstance(result, tuple)
         self.assertEqual(len(result), 2)
@@ -55,16 +56,16 @@ class WebPDecodeTests(WebPDecodeMixin, unittest.TestCase):
 
     def test_get_info_error(self):
         """
-        Test the getInfo() method
+        Test the GetInfo() method
         """
         with self.assertRaises(Exception):
-            self.webp_decoder.getInfo(create_string_buffer(0))
+            decode.GetInfo(create_string_buffer(0))
 
     def test_decode_RGB(self):
         """
-        Test the decodeRGB() method
+        Test the DecodeRGB() method
         """
-        result = self.webp_decoder.decodeRGB(WEBP_IMAGE_DATA)
+        result = decode.DecodeRGB(WEBP_IMAGE_DATA)
         stride = IMAGE_WIDTH * 3
         size = stride * IMAGE_HEIGHT
 
@@ -77,9 +78,9 @@ class WebPDecodeTests(WebPDecodeMixin, unittest.TestCase):
 
     def test_decode_RGBA(self):
         """
-        Test the decodeRGBA() method
+        Test the DecodeRGBA() method
         """
-        result = self.webp_decoder.decodeRGBA(WEBP_IMAGE_DATA)
+        result = decode.DecodeRGBA(WEBP_IMAGE_DATA)
         stride = IMAGE_WIDTH * 4
         size = stride * IMAGE_HEIGHT
 
@@ -92,9 +93,9 @@ class WebPDecodeTests(WebPDecodeMixin, unittest.TestCase):
 
     def test_decode_BGR(self):
         """
-        Test the decodeBGR() method
+        Test the DecodeBGR() method
         """
-        result = self.webp_decoder.decodeBGR(WEBP_IMAGE_DATA)
+        result = decode.DecodeBGR(WEBP_IMAGE_DATA)
         stride = IMAGE_WIDTH * 3
         size = stride * IMAGE_HEIGHT
 
@@ -107,9 +108,9 @@ class WebPDecodeTests(WebPDecodeMixin, unittest.TestCase):
 
     def test_decode_BGRA(self):
         """
-        Test the decodeBGRA() method
+        Test the DecodeBGRA() method
         """
-        result = self.webp_decoder.decodeBGRA(WEBP_IMAGE_DATA)
+        result = decode.DecodeBGRA(WEBP_IMAGE_DATA)
         stride = IMAGE_WIDTH * 4
         size = stride * IMAGE_HEIGHT
 
@@ -122,9 +123,9 @@ class WebPDecodeTests(WebPDecodeMixin, unittest.TestCase):
 
     def test_decode_YUV(self):
         """
-        Test the decodeYUV() method
+        Test the DecodeYUV() method
         """
-        result = self.webp_decoder.decodeYUV(WEBP_IMAGE_DATA)
+        result = decode.DecodeYUV(WEBP_IMAGE_DATA)
         size = IMAGE_WIDTH * IMAGE_HEIGHT
 
         self.assertIsInstance(result, BitmapHandler)
@@ -143,9 +144,9 @@ class WebPDecodeTests(WebPDecodeMixin, unittest.TestCase):
 
     def test_output_RGB(self):
         """
-        Export decodeRGB() method result to file
+        Export DecodeRGB() method result to file
         """
-        result = self.webp_decoder.decodeRGB(WEBP_IMAGE_DATA)
+        result = decode.DecodeRGB(WEBP_IMAGE_DATA)
         image = Image.frombuffer(
             "RGB", (result.width, result.height), str(result.bitmap),
             "raw", "RGB", 0, 1
@@ -154,9 +155,9 @@ class WebPDecodeTests(WebPDecodeMixin, unittest.TestCase):
 
     def test_output_RGBA(self):
         """
-        Export decodeRGBA() method result to file
+        Export DecodeRGBA() method result to file
         """
-        result = self.webp_decoder.decodeRGBA(WEBP_IMAGE_DATA)
+        result = decode.DecodeRGBA(WEBP_IMAGE_DATA)
         image = Image.frombuffer(
             "RGBA", (result.width, result.height), result.bitmap,
             "raw", "RGBA", 0, 1
@@ -165,9 +166,9 @@ class WebPDecodeTests(WebPDecodeMixin, unittest.TestCase):
 
     def test_output_BGR(self):
         """
-        Export decodeBGR() method result to file
+        Export DecodeBGR() method result to file
         """
-        result = self.webp_decoder.decodeBGR(WEBP_IMAGE_DATA)
+        result = decode.DecodeBGR(WEBP_IMAGE_DATA)
         image = Image.frombuffer(
             "RGB", (result.width, result.height), str(result.bitmap),
             "raw", "BGR", 0, 1
@@ -176,9 +177,9 @@ class WebPDecodeTests(WebPDecodeMixin, unittest.TestCase):
 
     def test_output_BGRA(self):
         """
-        Export decodeBGRA() method result to file
+        Export DecodeBGRA() method result to file
         """
-        result = self.webp_decoder.decodeBGRA(WEBP_IMAGE_DATA)
+        result = decode.DecodeBGRA(WEBP_IMAGE_DATA)
         image = Image.frombuffer(
             "RGBA", (result.width, result.height), str(result.bitmap),
             "raw", "BGRA", 0, 1

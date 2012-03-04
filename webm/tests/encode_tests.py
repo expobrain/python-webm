@@ -26,9 +26,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from PIL import Image
+from webm import encode
 from webm.handlers import BitmapHandler, WebPHandler
-from webm.tests.common import (WebPEncodeMixin, IMAGE_WIDTH, IMAGE_HEIGHT,
-    PNG_BITMAP_DATA, ENCODE_FILENAME)
+from webm.tests.common import (IMAGE_WIDTH, IMAGE_HEIGHT, PNG_BITMAP_DATA,
+    ENCODE_FILENAME)
 
 try:
     import unittest2 as unittest
@@ -36,20 +37,20 @@ except ImportError:
     import unittest
 
 
-class WebPEncodeTests(WebPEncodeMixin, unittest.TestCase):
+class WebPEncodeTests(unittest.TestCase):
     """
     WebPEncode test cases
     """
 
     def test_encode_RGB(self):
         """
-        Test the encodeRGB() method
+        Test the EncodeRGB() method
         """
         image = BitmapHandler(
             PNG_BITMAP_DATA, BitmapHandler.RGB,
             IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 3
         )
-        result = self.webp_encoder.encodeRGB(image)
+        result = encode.EncodeRGB(image)
 
         self.assertIsInstance(result, WebPHandler)
         self.assertEqual(result.width, IMAGE_WIDTH)
@@ -57,7 +58,7 @@ class WebPEncodeTests(WebPEncodeMixin, unittest.TestCase):
 
     def test_encode_RGBA(self):
         """
-        Test the encodeRGBA() method
+        Test the EncodeRGBA() method
         """
         # Convert to RGBA
         size = IMAGE_WIDTH * IMAGE_HEIGHT
@@ -74,7 +75,7 @@ class WebPEncodeTests(WebPEncodeMixin, unittest.TestCase):
         )
 
         # Encode image
-        result = self.webp_encoder.encodeRGB(image)
+        result = encode.EncodeRGB(image)
 
         self.assertIsInstance(result, WebPHandler)
         self.assertEqual(result.width, IMAGE_WIDTH)
@@ -82,7 +83,7 @@ class WebPEncodeTests(WebPEncodeMixin, unittest.TestCase):
 
     def test_encode_BGRA(self):
         """
-        Test the encodeBGRA() method
+        Test the EncodeBGRA() method
         """
         # Convert to RGBA
         size = IMAGE_WIDTH * IMAGE_HEIGHT
@@ -99,7 +100,7 @@ class WebPEncodeTests(WebPEncodeMixin, unittest.TestCase):
         )
 
         # Encode image
-        result = self.webp_encoder.encodeBGRA(image)
+        result = encode.EncodeBGRA(image)
 
         self.assertIsInstance(result, WebPHandler)
         self.assertEqual(result.width, IMAGE_WIDTH)
@@ -107,7 +108,7 @@ class WebPEncodeTests(WebPEncodeMixin, unittest.TestCase):
 
     def test_encode_BGR(self):
         """
-        Test the encodeBGR() method
+        Test the EncodeBGR() method
         """
         # Convert to RGBA
         size = IMAGE_WIDTH * IMAGE_HEIGHT
@@ -124,7 +125,7 @@ class WebPEncodeTests(WebPEncodeMixin, unittest.TestCase):
         )
 
         # Encode image
-        result = self.webp_encoder.encodeBGRA(image)
+        result = encode.EncodeBGRA(image)
 
         self.assertIsInstance(result, WebPHandler)
         self.assertEqual(result.width, IMAGE_WIDTH)
@@ -132,19 +133,19 @@ class WebPEncodeTests(WebPEncodeMixin, unittest.TestCase):
 
     def test_output_RGB(self):
         """
-        Export encodeRGB() method result to file
+        Export EncodeRGB() method result to file
         """
         image = BitmapHandler(
             PNG_BITMAP_DATA, BitmapHandler.RGB,
             IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 3
         )
-        result = self.webp_encoder.encodeRGB(image)
+        result = encode.EncodeRGB(image)
 
         file(ENCODE_FILENAME.format("RGB"), "wb").write(result.data)
 
     def test_output_RGBA(self):
         """
-        Export encodeRGBA() method result to file
+        Export EncodeRGBA() method result to file
         """
         # Convert to RGBA
         size = IMAGE_WIDTH * IMAGE_HEIGHT
@@ -161,13 +162,13 @@ class WebPEncodeTests(WebPEncodeMixin, unittest.TestCase):
         )
 
         # Save image
-        result = self.webp_encoder.encodeRGBA(image)
+        result = encode.EncodeRGBA(image)
 
         file(ENCODE_FILENAME.format("RGBA"), "wb").write(result.data)
 
     def test_output_BGRA(self):
         """
-        Export encodeBGRA() method result to file
+        Export EncodeBGRA() method result to file
         """
         # Convert to RGBA
         size = IMAGE_WIDTH * IMAGE_HEIGHT
@@ -184,13 +185,13 @@ class WebPEncodeTests(WebPEncodeMixin, unittest.TestCase):
         )
 
         # Save image
-        result = self.webp_encoder.encodeBGRA(image)
+        result = encode.EncodeBGRA(image)
 
         file(ENCODE_FILENAME.format("BGRA"), "wb").write(result.data)
 
     def test_output_BGR(self):
         """
-        Export encodeBGR() method result to file
+        Export EncodeBGR() method result to file
         """
         # Convert to RGBA
         size = IMAGE_WIDTH * IMAGE_HEIGHT
@@ -207,6 +208,6 @@ class WebPEncodeTests(WebPEncodeMixin, unittest.TestCase):
         )
 
         # Save image
-        result = self.webp_encoder.encodeBGR(image)
+        result = encode.EncodeBGR(image)
 
         file(ENCODE_FILENAME.format("BGR"), "wb").write(result.data)

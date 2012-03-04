@@ -27,13 +27,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from handlers import BitmapHandler
 
-
 """
 Porting of the YUVtoRGB converter code from the Chromium project. See
 third_party/libwebp/yuv.c and /third_party/libwebp/yuv.h files for the original
 source code.
 """
 
+
+# -----------------------------------------------------------------------------
+# Internal functions
+# -----------------------------------------------------------------------------
+
+# YUV conversion constants
 YUV_FIX = 16                    # fixed-point precision
 YUV_RANGE_MIN = -227            # min value of r/g/b output
 YUV_RANGE_MAX = 256 + 226       # max value of r/g/b output
@@ -66,139 +71,139 @@ def _init_yuv_module():
 _init_yuv_module()
 
 
-class YUVDecoder(object):
+def _decode_YUV_image(image):
     """
-    Decodes YUV data to different formats
+    Decode the given image in YUV format to a RGB byte array
+
+    :param image: The image in YUV format to be decoded
+    :type image: BitmapHandler
+    :rtype: bytearray
     """
+    rgb_bitmap = bytearray()
 
-    def _decode_YUV_image(self, image):
-        """
-        Decode the given image in YUV format to a RGB byte array
+    for h in xrange(image.height):
+        for w in xrange(image.width):
+            # Get luma
+            i = h * image.stride + w
+            y = image.bitmap[i]
 
-        :param image: The image in YUV format to be decoded
-        :type image: BitmapHandler
-        :rtype: bytearray
-        """
-        rgb_bitmap = bytearray()
+            # WORKAROUND:
+            # This is a workaround for YUV to RGB decoding to have a useful
+            # grayscale image from the YUV data.
+            # Remove this when the correct YUV to color RGB function is
+            # found.
+            rgb_bitmap.extend((y, y, y))
 
-        for h in xrange(image.height):
-            for w in xrange(image.width):
-                # Get luma
-                i = h * image.stride + w
-                y = image.bitmap[i]
-
-                # WORKAROUND:
-                # This is a workaround for YUV to RGB decoding to have a useful
-                # grayscale image from the YUV data.
-                # Remove this when the correct YUV to color RGB function is
-                # found.
-                rgb_bitmap.extend((y, y, y))
-
-#                # Get chrominance
-#                i = h * image.uv_stride + int(w/2)
+#            # Get chrominance
+#            i = h * image.uv_stride + int(w/2)
 #
-#                if w % 2:
-#                    u = image.u_bitmap[i] & 0b1111
-#                    v = image.v_bitmap[i] & 0b1111
-#                else:
-#                    u = image.u_bitmap[i] >> 4
-#                    v = image.v_bitmap[i] >> 4
+#            if w % 2:
+#                u = image.u_bitmap[i] & 0b1111
+#                v = image.v_bitmap[i] & 0b1111
+#            else:
+#                u = image.u_bitmap[i] >> 4
+#                v = image.v_bitmap[i] >> 4
 #
-#                # Calculate RGB values
-#                r_off = VP8kVToR[v]
-#                g_off = (VP8kVToG[v] + VP8kUToG[u]) >> YUV_FIX
-#                b_off = VP8kUToB[u]
+#            # Calculate RGB values
+#            r_off = VP8kVToR[v]
+#            g_off = (VP8kVToG[v] + VP8kUToG[u]) >> YUV_FIX
+#            b_off = VP8kUToB[u]
 #
-#                rgb_bitmap.append( VP8kClip[y + r_off - YUV_RANGE_MIN] )
-#                rgb_bitmap.append( VP8kClip[y + g_off - YUV_RANGE_MIN] )
-#                rgb_bitmap.append( VP8kClip[y + b_off - YUV_RANGE_MIN] )
+#            rgb_bitmap.append( VP8kClip[y + r_off - YUV_RANGE_MIN] )
+#            rgb_bitmap.append( VP8kClip[y + g_off - YUV_RANGE_MIN] )
+#            rgb_bitmap.append( VP8kClip[y + b_off - YUV_RANGE_MIN] )
 
-        # End
-        return rgb_bitmap
+    # End
+    return rgb_bitmap
 
-    def YUVtoRGB(self, image):
-        """
-        Convert the given WebP image instance from a YUV format to an RGB format
 
-        :param image: The WebP image in YUV format
-        :type image: BitmapHandler
-        :rtype: BitmapHandler
-        """
-        return BitmapHandler(
-            self._decode_YUV_image(image), BitmapHandler.RGB,
-            image.width, image.height, image.width * 3
-        )
+# -----------------------------------------------------------------------------
+# Public functions
+# -----------------------------------------------------------------------------
 
-    def YUVtoRGBA(self, image):
-        """
-        Convert the given WebP image instance form YUV format to RGBA format
+def YUVtoRGB(image):
+    """
+    Convert the given WebP image instance from a YUV format to an RGB format
 
-        :param image: The WebP image in YUV format
-        :type image: BitmapHandler
-        :rtype: BitmapHandler
-        """
-        rgb_bitmap = self._decode_YUV_image(image)
-        rgba_bitmap = bytearray()
+    :param image: The WebP image in YUV format
+    :type image: BitmapHandler
+    :rtype: BitmapHandler
+    """
+    return BitmapHandler(
+        _decode_YUV_image(image), BitmapHandler.RGB,
+        image.width, image.height, image.width * 3
+    )
 
-        for i in xrange(len(rgb_bitmap) / 3):
-            i *= 3
+def YUVtoRGBA(image):
+    """
+    Convert the given WebP image instance form YUV format to RGBA format
 
-            rgba_bitmap.append(rgb_bitmap[i])
-            rgba_bitmap.append(rgb_bitmap[i + 1])
-            rgba_bitmap.append(rgb_bitmap[i + 2])
-            rgba_bitmap.append(0xff)
+    :param image: The WebP image in YUV format
+    :type image: BitmapHandler
+    :rtype: BitmapHandler
+    """
+    rgb_bitmap = _decode_YUV_image(image)
+    rgba_bitmap = bytearray()
 
-        # Return the BitmapHandler in RGB format
-        return BitmapHandler(
-            rgba_bitmap, BitmapHandler.RGBA,
-            image.width, image.height, image.width * 4
-        )
+    for i in xrange(len(rgb_bitmap) / 3):
+        i *= 3
 
-    def YUVtoBGR(self, image):
-        """
-        Convert the given WebP image instance form YUV format to BGR format
+        rgba_bitmap.append(rgb_bitmap[i])
+        rgba_bitmap.append(rgb_bitmap[i + 1])
+        rgba_bitmap.append(rgb_bitmap[i + 2])
+        rgba_bitmap.append(0xff)
 
-        :param image: The WebP image in YUV format
-        :type image: BitmapHandler
-        :rtype: BitmapHandler
-        """
-        rgb_bitmap = self._decode_YUV_image(image)
-        bgr_bitmap = bytearray()
+    # Return the BitmapHandler in RGB format
+    return BitmapHandler(
+        rgba_bitmap, BitmapHandler.RGBA,
+        image.width, image.height, image.width * 4
+    )
 
-        for i in xrange(len(rgb_bitmap) / 3):
-            i *= 3
+def YUVtoBGR(image):
+    """
+    Convert the given WebP image instance form YUV format to BGR format
 
-            bgr_bitmap.append(rgb_bitmap[i + 2])
-            bgr_bitmap.append(rgb_bitmap[i + 1])
-            bgr_bitmap.append(rgb_bitmap[i])
+    :param image: The WebP image in YUV format
+    :type image: BitmapHandler
+    :rtype: BitmapHandler
+    """
+    rgb_bitmap = _decode_YUV_image(image)
+    bgr_bitmap = bytearray()
 
-        # Return the BitmapHandler in BGR format
-        return BitmapHandler(
-            bgr_bitmap, BitmapHandler.BGR,
-            image.width, image.height, image.width * 3
-        )
+    for i in xrange(len(rgb_bitmap) / 3):
+        i *= 3
 
-    def YUVtoBGRA(self, image):
-        """
-        Convert the given WebP image instance form YUV format to BGRA format
+        bgr_bitmap.append(rgb_bitmap[i + 2])
+        bgr_bitmap.append(rgb_bitmap[i + 1])
+        bgr_bitmap.append(rgb_bitmap[i])
 
-        :param image: The WebP image in YUV format
-        :type image: BitmapHandler
-        :rtype: BitmapHandler
-        """
-        rgb_bitmap = self._decode_YUV_image(image)
-        bgra_bitmap = bytearray()
+    # Return the BitmapHandler in BGR format
+    return BitmapHandler(
+        bgr_bitmap, BitmapHandler.BGR,
+        image.width, image.height, image.width * 3
+    )
 
-        for i in xrange(len(rgb_bitmap) / 3):
-            i *= 3
+def YUVtoBGRA(image):
+    """
+    Convert the given WebP image instance form YUV format to BGRA format
 
-            bgra_bitmap.append(rgb_bitmap[i + 2])
-            bgra_bitmap.append(rgb_bitmap[i + 1])
-            bgra_bitmap.append(rgb_bitmap[i])
-            bgra_bitmap.append(0xff)
+    :param image: The WebP image in YUV format
+    :type image: BitmapHandler
+    :rtype: BitmapHandler
+    """
+    rgb_bitmap = _decode_YUV_image(image)
+    bgra_bitmap = bytearray()
 
-        # Return the BitmapHandler in BGRA format
-        return BitmapHandler(
-            bgra_bitmap, BitmapHandler.BGRA,
-            image.width, image.height, image.width * 4
-        )
+    for i in xrange(len(rgb_bitmap) / 3):
+        i *= 3
+
+        bgra_bitmap.append(rgb_bitmap[i + 2])
+        bgra_bitmap.append(rgb_bitmap[i + 1])
+        bgra_bitmap.append(rgb_bitmap[i])
+        bgra_bitmap.append(0xff)
+
+    # Return the BitmapHandler in BGRA format
+    return BitmapHandler(
+        bgra_bitmap, BitmapHandler.BGRA,
+        image.width, image.height, image.width * 4
+    )

@@ -26,8 +26,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from PIL import Image
-from webm.tests.common import WebPDecodeMixin, WEBP_IMAGE_DATA, DECODE_FILENAME
-from webm.yuv import YUVDecoder
+from webm import yuv, decode
+from webm.tests.common import WEBP_IMAGE_DATA, DECODE_FILENAME
 
 try:
     import unittest2 as unittest
@@ -35,7 +35,7 @@ except ImportError:
     import unittest
 
 
-class YuvTests(WebPDecodeMixin, unittest.TestCase):
+class YuvTests(unittest.TestCase):
     """
     YUV to RGB conversion module test case
     """
@@ -62,11 +62,11 @@ class YuvTests(WebPDecodeMixin, unittest.TestCase):
 
     def test_output_YUV_to_RGB(self):
         """
-        Export decodeYUV() method result to a RGB file
+        Export DecodeYUV() method result to a RGB file
         """
         # Get YUV data and convert to RGB
-        result = self.webp_decoder.decodeYUV(WEBP_IMAGE_DATA)
-        result = YUVDecoder().YUVtoRGB(result)
+        result = decode.DecodeYUV(WEBP_IMAGE_DATA)
+        result = yuv.YUVtoRGB(result)
 
         # Save image
         image = Image.frombuffer(
@@ -77,11 +77,11 @@ class YuvTests(WebPDecodeMixin, unittest.TestCase):
 
     def test_output_YUV_to_RGBA(self):
         """
-        Export decodeYUV() method result to a RGBA file
+        Export DecodeYUV() method result to a RGBA file
         """
         # Get YUV data and convert to RGB
-        result = self.webp_decoder.decodeYUV(WEBP_IMAGE_DATA)
-        result = YUVDecoder().YUVtoRGBA(result)
+        result = decode.DecodeYUV(WEBP_IMAGE_DATA)
+        result = yuv.YUVtoRGBA(result)
 
         # Save image
         image = Image.frombuffer(
@@ -92,11 +92,11 @@ class YuvTests(WebPDecodeMixin, unittest.TestCase):
 
     def test_output_YUV_to_BGR(self):
         """
-        Export decodeYUV() method result to a BGR file
+        Export DecodeYUV() method result to a BGR file
         """
         # Get YUV data and convert to BGR
-        result = self.webp_decoder.decodeYUV(WEBP_IMAGE_DATA)
-        result = YUVDecoder().YUVtoBGR(result)
+        result = decode.DecodeYUV(WEBP_IMAGE_DATA)
+        result = yuv.YUVtoBGR(result)
 
         # Save image
         image = Image.frombuffer(
@@ -107,11 +107,11 @@ class YuvTests(WebPDecodeMixin, unittest.TestCase):
 
     def test_output_YUV_to_BGRA(self):
         """
-        Export decodeYUV() method result to a BGRA file
+        Export DecodeYUV() method result to a BGRA file
         """
         # Get YUV data and convert to BGRA
-        result = self.webp_decoder.decodeYUV(WEBP_IMAGE_DATA)
-        result = YUVDecoder().YUVtoBGRA(result)
+        result = decode.DecodeYUV(WEBP_IMAGE_DATA)
+        result = yuv.YUVtoBGRA(result)
 
         # Save image
         image = Image.frombuffer(

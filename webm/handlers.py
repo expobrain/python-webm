@@ -45,8 +45,8 @@ class BitmapHandler(object):
         width/height.
 
         Passing a null image data, and invalid format or a non
-        positive integer for width/height creates an instance to an invalid WebP
-        image.
+        positive integer for width/height creates an instance to an invalid
+        WebP image.
 
         If the image is in YUV format the bitmap parameter will be the Y(luma)
         component and the U/V chrominance component bitmap must be passed else
@@ -104,8 +104,8 @@ class WebPHandlerError(IOError):
 
 class WebPHandler(object):
     """
-    Contains data relative to an WebP encoded image and allow loading and saving
-    .webp files.
+    Contains data relative to an WebP encoded image and allow loading and
+    saving .webp files.
 
     The code is base on the documentation at
     http://code.google.com/speed/webp/docs/riff_container.html
@@ -127,16 +127,17 @@ class WebPHandler(object):
         :type filename: string
         :rtype: WebPHandler
         """
-        from webm.decode import WebPDecoder
+        from webm import decode
 
         data = file(filename, "rb").read()
-        width, height = WebPDecoder.getInfo(data)
+        width, height = decode.GetInfo(data)
 
         return WebPHandler(bytearray(data), width, height)
 
     def __init__(self, data=None, width= -1, height= -1):
         """
-        Constructor accepts the data, width and height of the WebP encoded image
+        Constructor accepts the data, width and height of the WebP encoded
+        image
 
         :param source: The image encoded data
         :param width: The image's width
