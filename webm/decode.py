@@ -25,42 +25,19 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from ctypes import byref, c_int, c_uint, create_string_buffer, memmove, c_void_p
+from ctypes import (byref, c_int, c_uint, create_string_buffer, memmove,
+    c_void_p)
+from webm import _LIBRARY
 from webm.handlers import BitmapHandler
-import sys
 
-
-# Per-OS setup
-if sys.platform == "win32":
-    from ctypes import windll as loader
-
-    LIBRARY = "libwebp.dll"
-
-elif sys.platform == "linux2":
-    from ctypes import cdll as loader
-
-    LIBRARY = "libwebp.so.0"
-
-elif sys.platform == "darwin":
-    from ctypes import cdll as loader
-
-    LIBRARY = "libwebp.dylib"
-
-else:
-    raise NotImplementedError(
-        "Test non implemented under {0}".format( sys.platform )
-    )
-
-# Load library
-WEBPDECODE = loader.LoadLibrary( LIBRARY )
 
 # Set return types
-WEBPDECODE.WebPDecodeRGB.restype    = c_void_p
-WEBPDECODE.WebPDecodeRGBA.restype   = c_void_p
-WEBPDECODE.WebPDecodeBGR.restype    = c_void_p
-WEBPDECODE.WebPDecodeBGRA.restype   = c_void_p
-WEBPDECODE.WebPDecodeYUV.restype    = c_void_p
-WEBPDECODE.WebPGetInfo.restype      = c_uint
+_LIBRARY.WebPDecodeRGB.restype    = c_void_p
+_LIBRARY.WebPDecodeRGBA.restype   = c_void_p
+_LIBRARY.WebPDecodeBGR.restype    = c_void_p
+_LIBRARY.WebPDecodeBGRA.restype   = c_void_p
+_LIBRARY.WebPDecodeYUV.restype    = c_void_p
+_LIBRARY.WebPGetInfo.restype      = c_uint
 
 
 class HeaderError( Exception ):
@@ -91,7 +68,7 @@ class WebPDecoder( object ):
         height  = c_int(-1)
         size    = c_uint( len(data) )
 
-        ret = WEBPDECODE.WebPGetInfo( str(data),
+        ret = _LIBRARY.WebPGetInfo( str(data),
                                       size,
                                       byref(width), byref(height) )
 
@@ -144,7 +121,7 @@ class WebPDecoder( object ):
         :rtype: WebPImage
         """
         bitmap, width, height = self._decode( data,
-                                              WEBPDECODE.WebPDecodeRGB,
+                                              _LIBRARY.WebPDecodeRGB,
                                               self.PIXEL_SZ )
 
         return BitmapHandler( bitmap, BitmapHandler.RGB,
@@ -159,7 +136,7 @@ class WebPDecoder( object ):
         :rtype: WebPImage
         """
         bitmap, width, height = self._decode( data,
-                                              WEBPDECODE.WebPDecodeBGR,
+                                              _LIBRARY.WebPDecodeBGR,
                                               self.PIXEL_SZ )
 
         return BitmapHandler( bitmap, BitmapHandler.BGR,
@@ -174,7 +151,7 @@ class WebPDecoder( object ):
         :rtype: WebPImage
         """
         bitmap, width, height = self._decode( data,
-                                              WEBPDECODE.WebPDecodeBGRA,
+                                              _LIBRARY.WebPDecodeBGRA,
                                               self.PIXEL_ALPHA_SZ )
 
         return BitmapHandler( bitmap, BitmapHandler.BGRA,
@@ -189,7 +166,7 @@ class WebPDecoder( object ):
         :rtype: WebPImage
         """
         bitmap, width, height = self._decode( data,
-                                              WEBPDECODE.WebPDecodeRGBA,
+                                              _LIBRARY.WebPDecodeRGBA,
                                               self.PIXEL_ALPHA_SZ )
 
         return BitmapHandler( bitmap, BitmapHandler.RGBA,
@@ -213,7 +190,7 @@ class WebPDecoder( object ):
         uv_stride   = c_int(-1)
 
         # Decode image an return pointer to decoded data
-        bitmap_p = WEBPDECODE.WebPDecodeYUV( str(data),
+        bitmap_p = _LIBRARY.WebPDecodeYUV( str(data),
                                              size,
                                              byref(width), byref(height),
                                              u, v,

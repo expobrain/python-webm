@@ -25,5 +25,32 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+import sys
+
+
 # Generic constants
 __VERSION__ = "0.1.4beta"
+
+
+# Per-OS setup
+if sys.platform == "win32":
+    from ctypes import windll as loader
+
+    _LIBRARY = "libwebp.dll"
+
+elif sys.platform == "linux2":
+    from ctypes import cdll as loader
+
+    _LIBRARY = "libwebp.so.0"
+
+elif sys.platform == "darwin":
+    from ctypes import cdll as loader
+
+    _LIBRARY = "libwebp.dylib"
+
+else:
+    raise NotImplementedError(
+        "Test non implemented under {0}".format(sys.platform))
+
+# Load library
+_LIBRARY = loader.LoadLibrary(_LIBRARY)

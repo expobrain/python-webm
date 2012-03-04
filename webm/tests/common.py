@@ -27,8 +27,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from PIL import Image
-from webm.decode import WEBPDECODE, WebPDecoder
-from webm.encode import WEBPENCODE, WebPEncoder
+from webm import _LIBRARY
+from webm.decode import WebPDecoder
+from webm.encode import WebPEncoder
 import os
 import sys
 
@@ -56,7 +57,7 @@ class WebPDecodeMixin( object ):
         if sys.platform != "win32":
             from ctypes import CDLL
 
-            self.assertIsInstance( WEBPDECODE, CDLL )
+            self.assertIsInstance( _LIBRARY, CDLL )
 
         else:
             raise NotImplementedError(
@@ -76,7 +77,7 @@ class WebPEncodeMixin( object ):
         if sys.platform != "win32":
             from ctypes import CDLL
 
-            self.assertIsInstance( WEBPENCODE, CDLL )
+            self.assertIsInstance( _LIBRARY, CDLL )
 
         else:
             raise NotImplementedError(

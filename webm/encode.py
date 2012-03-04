@@ -26,50 +26,26 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from ctypes import c_int, c_float, c_void_p, byref, memmove, \
-    create_string_buffer
+from ctypes import (c_int, c_float, c_void_p, byref, memmove,
+    create_string_buffer)
+from webm import _LIBRARY
 from webm.handlers import WebPHandler
-import sys
 
-
-# Per-OS setup
-if sys.platform == "win32":
-    from ctypes import windll as loader
-
-    LIBRARY = "libwebp.dll"
-
-elif sys.platform == "linux2":
-    from ctypes import cdll as loader
-
-    LIBRARY = "libwebp.so.0"
-
-elif sys.platform == "darwin":
-    from ctypes import cdll as loader
-
-    LIBRARY = "libwebp.dylib"
-
-else:
-    raise NotImplementedError(
-        "Test non implemented under {0}".format( sys.platform )
-    )
-
-# Load library
-WEBPENCODE = loader.LoadLibrary( LIBRARY )
 
 # Set return types
-WEBPENCODE.WebPEncodeRGB.argtypes   = [ c_void_p, c_int, c_int, c_int, c_float,
+_LIBRARY.WebPEncodeRGB.argtypes   = [ c_void_p, c_int, c_int, c_int, c_float,
                                         c_void_p ]
-WEBPENCODE.WebPEncodeBGR.argtypes   = [ c_void_p, c_int, c_int, c_int, c_float,
+_LIBRARY.WebPEncodeBGR.argtypes   = [ c_void_p, c_int, c_int, c_int, c_float,
                                         c_void_p ]
-WEBPENCODE.WebPEncodeRGBA.argtypes  = [ c_void_p, c_int, c_int, c_int, c_float,
+_LIBRARY.WebPEncodeRGBA.argtypes  = [ c_void_p, c_int, c_int, c_int, c_float,
                                         c_void_p ]
-WEBPENCODE.WebPEncodeBGRA.argtypes  = [ c_void_p, c_int, c_int, c_int, c_float,
+_LIBRARY.WebPEncodeBGRA.argtypes  = [ c_void_p, c_int, c_int, c_int, c_float,
                                         c_void_p ]
 
-WEBPENCODE.WebPEncodeRGB.restype    = c_int
-WEBPENCODE.WebPEncodeBGR.restype    = c_int
-WEBPENCODE.WebPEncodeRGBA.restype   = c_int
-WEBPENCODE.WebPEncodeBGRA.restype   = c_int
+_LIBRARY.WebPEncodeRGB.restype    = c_int
+_LIBRARY.WebPEncodeBGR.restype    = c_int
+_LIBRARY.WebPEncodeRGBA.restype   = c_int
+_LIBRARY.WebPEncodeBGRA.restype   = c_int
 
 
 class WebPEncoder( object ):
@@ -118,7 +94,7 @@ class WebPEncoder( object ):
         :type image: BitmapHandler
         :type quality: float
         """
-        return self._encode( WEBPENCODE.WebPEncodeRGB, image, quality )
+        return self._encode( _LIBRARY.WebPEncodeRGB, image, quality )
 
     def encodeRGBA(self, image, quality=100):
         """
@@ -130,7 +106,7 @@ class WebPEncoder( object ):
         :type image: BitmapHandler
         :type quality: float
         """
-        return self._encode( WEBPENCODE.WebPEncodeRGBA, image, quality )
+        return self._encode( _LIBRARY.WebPEncodeRGBA, image, quality )
 
     def encodeBGRA(self, image, quality=100):
         """
@@ -142,7 +118,7 @@ class WebPEncoder( object ):
         :type image: BitmapHandler
         :type quality: float
         """
-        return self._encode( WEBPENCODE.WebPEncodeBGRA, image, quality )
+        return self._encode( _LIBRARY.WebPEncodeBGRA, image, quality )
 
     def encodeBGR(self, image, quality=100):
         """
@@ -154,4 +130,4 @@ class WebPEncoder( object ):
         :type image: BitmapHandler
         :type quality: float
         """
-        return self._encode( WEBPENCODE.WebPEncodeBGR, image, quality )
+        return self._encode( _LIBRARY.WebPEncodeBGR, image, quality )
