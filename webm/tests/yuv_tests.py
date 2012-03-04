@@ -38,7 +38,7 @@ except:
     raise
 
 
-class YuvTests( WebPDecodeMixin, unittest.TestCase ):
+class YuvTests(WebPDecodeMixin, unittest.TestCase):
     """
     YUV to RGB conversion module test case
     """
@@ -49,76 +49,76 @@ class YuvTests( WebPDecodeMixin, unittest.TestCase ):
         """
         import webm.yuv as yuv
 
-        self.assertEqual( len(yuv.VP8kVToR), 256 )
-        self.assertEqual( len(yuv.VP8kUToB), 256 )
-        self.assertEqual( len(yuv.VP8kVToG), 256 )
-        self.assertEqual( len(yuv.VP8kUToG), 256 )
-        self.assertEqual( len(yuv.VP8kClip),
-                          yuv.YUV_RANGE_MAX - yuv.YUV_RANGE_MIN )
+        self.assertEqual(len(yuv.VP8kVToR), 256)
+        self.assertEqual(len(yuv.VP8kUToB), 256)
+        self.assertEqual(len(yuv.VP8kVToG), 256)
+        self.assertEqual(len(yuv.VP8kUToG), 256)
+        self.assertEqual(
+            len(yuv.VP8kClip), yuv.YUV_RANGE_MAX - yuv.YUV_RANGE_MIN)
 
-        self.assertNotEqual( yuv.VP8kVToR, [0] * 256 )
-        self.assertNotEqual( yuv.VP8kUToB, [0] * 256 )
-        self.assertNotEqual( yuv.VP8kVToG, [0] * 256 )
-        self.assertNotEqual( yuv.VP8kUToG, [0] * 256 )
-        self.assertNotEqual( yuv.VP8kClip,
-                             [0] * (yuv.YUV_RANGE_MAX - yuv.YUV_RANGE_MIN) )
+        self.assertNotEqual(yuv.VP8kVToR, [0] * 256)
+        self.assertNotEqual(yuv.VP8kUToB, [0] * 256)
+        self.assertNotEqual(yuv.VP8kVToG, [0] * 256)
+        self.assertNotEqual(yuv.VP8kUToG, [0] * 256)
+        self.assertNotEqual(
+            yuv.VP8kClip, [0] * (yuv.YUV_RANGE_MAX - yuv.YUV_RANGE_MIN))
 
     def test_output_YUV_to_RGB(self):
         """
         Export decodeYUV() method result to a RGB file
         """
         # Get YUV data and convert to RGB
-        result = self.webp_decoder.decodeYUV( WEBP_IMAGE_DATA )
-        result = YUVDecoder().YUVtoRGB( result )
+        result = self.webp_decoder.decodeYUV(WEBP_IMAGE_DATA)
+        result = YUVDecoder().YUVtoRGB(result)
 
         # Save image
-        image = Image.frombuffer( "RGB",
-                                  (result.width, result.height),
-                                  str(result.bitmap),
-                                  "raw", "RGB", 0, 1 )
-        image.save( DECODE_FILENAME.format( "YUV_RGB" ) )
+        image = Image.frombuffer(
+            "RGB", (result.width, result.height), str(result.bitmap),
+            "raw", "RGB", 0, 1
+        )
+        image.save(DECODE_FILENAME.format("YUV_RGB"))
 
     def test_output_YUV_to_RGBA(self):
         """
         Export decodeYUV() method result to a RGBA file
         """
         # Get YUV data and convert to RGB
-        result = self.webp_decoder.decodeYUV( WEBP_IMAGE_DATA )
-        result = YUVDecoder().YUVtoRGBA( result )
+        result = self.webp_decoder.decodeYUV(WEBP_IMAGE_DATA)
+        result = YUVDecoder().YUVtoRGBA(result)
 
         # Save image
-        image = Image.frombuffer( "RGBA",
-                                  (result.width, result.height),
-                                  str(result.bitmap),
-                                  "raw", "RGBA", 0, 1 )
-        image.save( DECODE_FILENAME.format( "YUV_RGBA" ) )
+        image = Image.frombuffer(
+            "RGBA", (result.width, result.height), str(result.bitmap),
+            "raw", "RGBA", 0, 1
+        )
+        image.save(DECODE_FILENAME.format("YUV_RGBA"))
 
     def test_output_YUV_to_BGR(self):
         """
         Export decodeYUV() method result to a BGR file
         """
         # Get YUV data and convert to BGR
-        result = self.webp_decoder.decodeYUV( WEBP_IMAGE_DATA )
-        result = YUVDecoder().YUVtoBGR( result )
+        result = self.webp_decoder.decodeYUV(WEBP_IMAGE_DATA)
+        result = YUVDecoder().YUVtoBGR(result)
 
         # Save image
-        image = Image.frombuffer( "RGB",
-                                  (result.width, result.height),
-                                  str(result.bitmap),
-                                  "raw", "BGR", 0, 1 )
-        image.save( DECODE_FILENAME.format( "YUV_BGR" ) )
+        image = Image.frombuffer(
+            "RGB", (result.width, result.height), str(result.bitmap),
+            "raw", "BGR", 0, 1
+        )
+        image.save(DECODE_FILENAME.format("YUV_BGR"))
 
     def test_output_YUV_to_BGRA(self):
         """
         Export decodeYUV() method result to a BGRA file
         """
         # Get YUV data and convert to BGRA
-        result = self.webp_decoder.decodeYUV( WEBP_IMAGE_DATA )
-        result = YUVDecoder().YUVtoBGRA( result )
+        result = self.webp_decoder.decodeYUV(WEBP_IMAGE_DATA)
+        result = YUVDecoder().YUVtoBGRA(result)
 
         # Save image
-        image = Image.frombuffer( "RGBA",
-                                  (result.width, result.height),
-                                  str(result.bitmap),
-                                  "raw", "BGRA", 0, 1 )
-        image.save( DECODE_FILENAME.format( "YUV_BGRA" ) )
+        image = Image.frombuffer(
+            "RGBA", (result.width, result.height), str(result.bitmap),
+            "raw", "BGRA", 0, 1
+        )
+        image.save(DECODE_FILENAME.format("YUV_BGRA"))
