@@ -83,12 +83,12 @@ class BitmapHandler(object):
 
         # Check if bitmap handler is valid
         is_valid = (isinstance(bitmap, bytearray)
-                    and format in self.FORMATS
+                    and fmt in self.FORMATS
                     and width > -1
                     and height > -1)
 
         # Additional setups for YUV image
-        if is_valid and format == self.YUV:
+        if is_valid and fmt == self.YUV:
             # Check if YUV image is valid
             is_valid = (isinstance(u_bitmap, bytearray)
                         and isinstance(v_bitmap, bytearray)
