@@ -32,28 +32,28 @@ from webm.handlers import BitmapHandler
 
 
 # Set return types
-_LIBRARY.WebPDecodeRGB.restype    = c_void_p
-_LIBRARY.WebPDecodeRGBA.restype   = c_void_p
-_LIBRARY.WebPDecodeBGR.restype    = c_void_p
-_LIBRARY.WebPDecodeBGRA.restype   = c_void_p
-_LIBRARY.WebPDecodeYUV.restype    = c_void_p
-_LIBRARY.WebPGetInfo.restype      = c_uint
+_LIBRARY.WebPDecodeRGB.restype = c_void_p
+_LIBRARY.WebPDecodeRGBA.restype = c_void_p
+_LIBRARY.WebPDecodeBGR.restype = c_void_p
+_LIBRARY.WebPDecodeBGRA.restype = c_void_p
+_LIBRARY.WebPDecodeYUV.restype = c_void_p
+_LIBRARY.WebPGetInfo.restype = c_uint
 
 
-class HeaderError( Exception ):
+class HeaderError(Exception):
     """
     Exception for image header operations and manipulations
     """
     pass
 
 
-class WebPDecoder( object ):
+class WebPDecoder(object):
     """
     Pure Python interface for the Google WebP decode library
     """
 
-    PIXEL_SZ        = 3
-    PIXEL_ALPHA_SZ  = 4
+    PIXEL_SZ = 3
+    PIXEL_ALPHA_SZ = 4
 
     @staticmethod
     def getInfo(data):
@@ -64,18 +64,18 @@ class WebPDecoder( object ):
         :type data: bytearray
         :rtype: tuple(int, int)
         """
-        width   = c_int(-1)
-        height  = c_int(-1)
-        size    = c_uint( len(data) )
+        width = c_int(-1)
+        height = c_int(-1)
+        size = c_uint(len(data))
 
-        ret = _LIBRARY.WebPGetInfo( str(data),
+        ret = _LIBRARY.WebPGetInfo(str(data),
                                       size,
-                                      byref(width), byref(height) )
+                                      byref(width), byref(height))
 
         if ret == 0:
             raise HeaderError
         else:
-            return ( width.value, height.value )
+            return (width.value, height.value)
 
     def _decode(self, data, decode_func, pixel_sz):
         """
@@ -94,23 +94,23 @@ class WebPDecoder( object ):
         :rtype: tuple(bytearray, int, int)
         """
         # Prepare parameters
-        width   = c_int(-1)
-        height  = c_int(-1)
-        size    = c_uint( len(data) )
+        width = c_int(-1)
+        height = c_int(-1)
+        size = c_uint(len(data))
 
         # Decode image an return pointer to decoded data
-        bitmap_p = decode_func( str(data), size, byref(width), byref(height) )
+        bitmap_p = decode_func(str(data), size, byref(width), byref(height))
 
         # Copy decoded data into a buffer
-        width   = width.value
-        height  = height.value
-        size    = width * height * pixel_sz
-        bitmap  = create_string_buffer( size )
+        width = width.value
+        height = height.value
+        size = width * height * pixel_sz
+        bitmap = create_string_buffer(size)
 
-        memmove( bitmap, bitmap_p, size )
+        memmove(bitmap, bitmap_p, size)
 
         # End
-        return ( bytearray(bitmap), width, height )
+        return (bytearray(bitmap), width, height)
 
     def decodeRGB(self, data):
         """
@@ -120,12 +120,12 @@ class WebPDecoder( object ):
         :type data: bytearray
         :rtype: WebPImage
         """
-        bitmap, width, height = self._decode( data,
+        bitmap, width, height = self._decode(data,
                                               _LIBRARY.WebPDecodeRGB,
-                                              self.PIXEL_SZ )
+                                              self.PIXEL_SZ)
 
-        return BitmapHandler( bitmap, BitmapHandler.RGB,
-                              width, height, self.PIXEL_SZ * width )
+        return BitmapHandler(bitmap, BitmapHandler.RGB,
+                              width, height, self.PIXEL_SZ * width)
 
     def decodeBGR(self, data):
         """
@@ -135,12 +135,12 @@ class WebPDecoder( object ):
         :type data: bytearray
         :rtype: WebPImage
         """
-        bitmap, width, height = self._decode( data,
+        bitmap, width, height = self._decode(data,
                                               _LIBRARY.WebPDecodeBGR,
-                                              self.PIXEL_SZ )
+                                              self.PIXEL_SZ)
 
-        return BitmapHandler( bitmap, BitmapHandler.BGR,
-                              width, height, self.PIXEL_SZ * width )
+        return BitmapHandler(bitmap, BitmapHandler.BGR,
+                              width, height, self.PIXEL_SZ * width)
 
     def decodeBGRA(self, data):
         """
@@ -150,12 +150,12 @@ class WebPDecoder( object ):
         :type data: bytearray
         :rtype: WebPImage
         """
-        bitmap, width, height = self._decode( data,
+        bitmap, width, height = self._decode(data,
                                               _LIBRARY.WebPDecodeBGRA,
-                                              self.PIXEL_ALPHA_SZ )
+                                              self.PIXEL_ALPHA_SZ)
 
-        return BitmapHandler( bitmap, BitmapHandler.BGRA,
-                              width, height, self.PIXEL_ALPHA_SZ * width )
+        return BitmapHandler(bitmap, BitmapHandler.BGRA,
+                              width, height, self.PIXEL_ALPHA_SZ * width)
 
     def decodeRGBA(self, data):
         """
@@ -165,12 +165,12 @@ class WebPDecoder( object ):
         :type data: bytearray
         :rtype: WebPImage
         """
-        bitmap, width, height = self._decode( data,
+        bitmap, width, height = self._decode(data,
                                               _LIBRARY.WebPDecodeRGBA,
-                                              self.PIXEL_ALPHA_SZ )
+                                              self.PIXEL_ALPHA_SZ)
 
-        return BitmapHandler( bitmap, BitmapHandler.RGBA,
-                              width, height, self.PIXEL_ALPHA_SZ * width )
+        return BitmapHandler(bitmap, BitmapHandler.RGBA,
+                              width, height, self.PIXEL_ALPHA_SZ * width)
 
     def decodeYUV(self, data):
         """
@@ -181,45 +181,45 @@ class WebPDecoder( object ):
         :rtype: WebPImage
         """
         # Prepare parameters
-        width       = c_int(-1)
-        height      = c_int(-1)
-        size        = c_uint( len(data) )
-        u           = create_string_buffer(0)
-        v           = create_string_buffer(0)
-        stride      = c_int(-1)
-        uv_stride   = c_int(-1)
+        width = c_int(-1)
+        height = c_int(-1)
+        size = c_uint(len(data))
+        u = create_string_buffer(0)
+        v = create_string_buffer(0)
+        stride = c_int(-1)
+        uv_stride = c_int(-1)
 
         # Decode image an return pointer to decoded data
-        bitmap_p = _LIBRARY.WebPDecodeYUV( str(data),
+        bitmap_p = _LIBRARY.WebPDecodeYUV(str(data),
                                              size,
                                              byref(width), byref(height),
                                              u, v,
 #                                             byref(u), byref(v),
-                                             byref(stride), byref(uv_stride) )
+                                             byref(stride), byref(uv_stride))
 
         # Convert data to Python types
-        width       = width.value
-        height      = height.value
-        stride      = stride.value
-        uv_stride   = uv_stride.value
+        width = width.value
+        height = height.value
+        stride = stride.value
+        uv_stride = uv_stride.value
 
         # Copy decoded data into a buffer
-        size    = stride * height
-        bitmap  = create_string_buffer( size )
+        size = stride * height
+        bitmap = create_string_buffer(size)
 
-        memmove( bitmap, bitmap_p, size )
+        memmove(bitmap, bitmap_p, size)
 
         # Copy UV chrominace bitmap
-        uv_size     = uv_stride * height
-        u_bitmap    = create_string_buffer( uv_size )
-        v_bitmap    = create_string_buffer( uv_size )
+        uv_size = uv_stride * height
+        u_bitmap = create_string_buffer(uv_size)
+        v_bitmap = create_string_buffer(uv_size)
 
-        memmove( u_bitmap, u, uv_size )
-        memmove( v_bitmap, v, uv_size )
+        memmove(u_bitmap, u, uv_size)
+        memmove(v_bitmap, v, uv_size)
 
         # End
-        return BitmapHandler( bytearray(bitmap),
+        return BitmapHandler(bytearray(bitmap),
                               BitmapHandler.YUV, width, height, stride,
                               u_bitmap=bytearray(u_bitmap),
                               v_bitmap=bytearray(v_bitmap),
-                              uv_stride=uv_stride )
+                              uv_stride=uv_stride)
