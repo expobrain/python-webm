@@ -31,7 +31,11 @@ from webm import _LIBRARY
 from webm.handlers import BitmapHandler
 
 
-# Set function parameters
+# Set function parameter types
+_LIBRARY.WebPDecodeRGB.argtypes = [c_void_p, c_uint, c_void_p, c_void_p]
+_LIBRARY.WebPDecodeRGBA.argtypes = [c_void_p, c_uint, c_void_p, c_void_p]
+_LIBRARY.WebPDecodeBGR.argtypes = [c_void_p, c_uint, c_void_p, c_void_p]
+_LIBRARY.WebPDecodeBGRA.argtypes = [c_void_p, c_uint, c_void_p, c_void_p]
 _LIBRARY.WebPGetInfo.argtypes = [c_void_p, c_uint, c_void_p, c_void_p]
 
 # Set return types
@@ -101,7 +105,7 @@ class WebPDecoder(object):
         # Prepare parameters
         width = c_int(-1)
         height = c_int(-1)
-        size = c_uint(len(data))
+        size = len(data)
 
         # Decode image an return pointer to decoded data
         bitmap_p = decode_func(str(data), size, byref(width), byref(height))
@@ -125,12 +129,11 @@ class WebPDecoder(object):
         :type data: bytearray
         :rtype: WebPImage
         """
-        bitmap, width, height = self._decode(data,
-                                              _LIBRARY.WebPDecodeRGB,
-                                              self.PIXEL_SZ)
+        bitmap, width, height = self._decode(
+            data, _LIBRARY.WebPDecodeRGB, self.PIXEL_SZ)
 
-        return BitmapHandler(bitmap, BitmapHandler.RGB,
-                              width, height, self.PIXEL_SZ * width)
+        return BitmapHandler(
+            bitmap, BitmapHandler.RGB, width, height, self.PIXEL_SZ * width)
 
     def decodeBGR(self, data):
         """
@@ -140,12 +143,11 @@ class WebPDecoder(object):
         :type data: bytearray
         :rtype: WebPImage
         """
-        bitmap, width, height = self._decode(data,
-                                              _LIBRARY.WebPDecodeBGR,
-                                              self.PIXEL_SZ)
+        bitmap, width, height = self._decode(
+            data, _LIBRARY.WebPDecodeBGR, self.PIXEL_SZ)
 
-        return BitmapHandler(bitmap, BitmapHandler.BGR,
-                              width, height, self.PIXEL_SZ * width)
+        return BitmapHandler(
+            bitmap, BitmapHandler.BGR, width, height, self.PIXEL_SZ * width)
 
     def decodeBGRA(self, data):
         """
@@ -155,12 +157,13 @@ class WebPDecoder(object):
         :type data: bytearray
         :rtype: WebPImage
         """
-        bitmap, width, height = self._decode(data,
-                                              _LIBRARY.WebPDecodeBGRA,
-                                              self.PIXEL_ALPHA_SZ)
+        bitmap, width, height = self._decode(
+            data, _LIBRARY.WebPDecodeBGRA, self.PIXEL_ALPHA_SZ)
 
-        return BitmapHandler(bitmap, BitmapHandler.BGRA,
-                              width, height, self.PIXEL_ALPHA_SZ * width)
+        return BitmapHandler(
+            bitmap, BitmapHandler.BGRA, width, height,
+            self.PIXEL_ALPHA_SZ * width
+        )
 
     def decodeRGBA(self, data):
         """
@@ -170,12 +173,13 @@ class WebPDecoder(object):
         :type data: bytearray
         :rtype: WebPImage
         """
-        bitmap, width, height = self._decode(data,
-                                              _LIBRARY.WebPDecodeRGBA,
-                                              self.PIXEL_ALPHA_SZ)
+        bitmap, width, height = self._decode(
+            data, _LIBRARY.WebPDecodeRGBA, self.PIXEL_ALPHA_SZ)
 
-        return BitmapHandler(bitmap, BitmapHandler.RGBA,
-                              width, height, self.PIXEL_ALPHA_SZ * width)
+        return BitmapHandler(
+            bitmap, BitmapHandler.RGBA, width, height,
+            self.PIXEL_ALPHA_SZ * width
+        )
 
     def decodeYUV(self, data):
         """
