@@ -5,6 +5,6 @@ syntax: glob
 *.pyc
 .settings
 .DS_Store
-src/webm/tests/decode_*.png
-src/webm/tests/encode_*.webp
-src/webm/tests/webphandler_*.webp
+webm/tests/decode_*.png
+webm/tests/encode_*.webp
+webm/tests/webphandler_*.webp
