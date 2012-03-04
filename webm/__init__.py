@@ -31,6 +31,9 @@ import sys
 # Generic constants
 __VERSION__ = "0.1.4beta"
 
+PIXEL_SZ = 3
+PIXEL_ALPHA_SZ = 4
+
 
 # Per-OS setup
 if sys.platform == "win32":

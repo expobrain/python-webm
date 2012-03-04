@@ -25,9 +25,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from ctypes import (c_int, c_uint, create_string_buffer, memmove,
-    c_void_p, POINTER)
-from webm import _LIBRARY
+from ctypes import (c_int, c_uint, create_string_buffer, memmove, c_void_p,
+    POINTER)
+from webm import _LIBRARY, PIXEL_ALPHA_SZ, PIXEL_SZ
 from webm.handlers import BitmapHandler
 
 
@@ -68,9 +68,6 @@ class WebPDecoder(object):
     """
     Pure Python interface for the Google WebP decode library
     """
-
-    PIXEL_SZ = 3
-    PIXEL_ALPHA_SZ = 4
 
     @staticmethod
     def getInfo(data):
@@ -139,10 +136,10 @@ class WebPDecoder(object):
         :rtype: WebPImage
         """
         bitmap, width, height = self._decode(
-            data, _LIBRARY.WebPDecodeRGB, self.PIXEL_SZ)
+            data, _LIBRARY.WebPDecodeRGB, PIXEL_SZ)
 
         return BitmapHandler(
-            bitmap, BitmapHandler.RGB, width, height, self.PIXEL_SZ * width)
+            bitmap, BitmapHandler.RGB, width, height, PIXEL_SZ * width)
 
     def decodeBGR(self, data):
         """
@@ -153,10 +150,10 @@ class WebPDecoder(object):
         :rtype: WebPImage
         """
         bitmap, width, height = self._decode(
-            data, _LIBRARY.WebPDecodeBGR, self.PIXEL_SZ)
+            data, _LIBRARY.WebPDecodeBGR, PIXEL_SZ)
 
         return BitmapHandler(
-            bitmap, BitmapHandler.BGR, width, height, self.PIXEL_SZ * width)
+            bitmap, BitmapHandler.BGR, width, height, PIXEL_SZ * width)
 
     def decodeBGRA(self, data):
         """
@@ -167,12 +164,10 @@ class WebPDecoder(object):
         :rtype: WebPImage
         """
         bitmap, width, height = self._decode(
-            data, _LIBRARY.WebPDecodeBGRA, self.PIXEL_ALPHA_SZ)
+            data, _LIBRARY.WebPDecodeBGRA, PIXEL_ALPHA_SZ)
 
         return BitmapHandler(
-            bitmap, BitmapHandler.BGRA, width, height,
-            self.PIXEL_ALPHA_SZ * width
-        )
+            bitmap, BitmapHandler.BGRA, width, height, PIXEL_ALPHA_SZ * width)
 
     def decodeRGBA(self, data):
         """
@@ -183,12 +178,10 @@ class WebPDecoder(object):
         :rtype: WebPImage
         """
         bitmap, width, height = self._decode(
-            data, _LIBRARY.WebPDecodeRGBA, self.PIXEL_ALPHA_SZ)
+            data, _LIBRARY.WebPDecodeRGBA, PIXEL_ALPHA_SZ)
 
         return BitmapHandler(
-            bitmap, BitmapHandler.RGBA, width, height,
-            self.PIXEL_ALPHA_SZ * width
-        )
+            bitmap, BitmapHandler.RGBA, width, height, PIXEL_ALPHA_SZ * width)
 
     def decodeYUV(self, data):
         """

@@ -48,6 +48,13 @@ _LIBRARY.WebPEncodeRGBA.restype = c_int
 _LIBRARY.WebPEncodeBGRA.restype = c_int
 
 
+class EncodeError(Exception):
+    """
+    Exception for encoding errors
+    """
+    pass
+
+
 class WebPEncoder(object):
     """
     Pure Python interface for the Google WebP encode library
@@ -78,7 +85,7 @@ class WebPEncoder(object):
 
         # Check return size
         if size == 0:
-            raise RuntimeError("Error during image encoding")
+            raise EncodeError
 
         # Convert output
         output = create_string_buffer(size)
