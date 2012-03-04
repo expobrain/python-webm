@@ -39,7 +39,7 @@ if sys.platform == "win32":
 elif sys.platform == "linux2":
     from ctypes import cdll as loader
 
-    LIBRARY = "libwebp.so"
+    LIBRARY = "libwebp.so.0"
 
 elif sys.platform == "darwin":
     from ctypes import cdll as loader
