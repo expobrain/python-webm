@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Copyright (c) 2011, Daniele Esposti <expo@expobrain.net>
