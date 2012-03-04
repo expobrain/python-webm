@@ -28,8 +28,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from PIL import Image
 from webm.handlers import BitmapHandler, WebPHandler
-from webm.tests.common import WebPEncodeMixin, IMAGE_WIDTH, IMAGE_HEIGHT, \
-    PNG_BITMAP_DATA, ENCODE_FILENAME
+from webm.tests.common import (WebPEncodeMixin, IMAGE_WIDTH, IMAGE_HEIGHT,
+    PNG_BITMAP_DATA, ENCODE_FILENAME)
 
 try:
     import unittest2 as unittest
@@ -39,7 +39,7 @@ except:
     raise
 
 
-class WebPEncodeTests( WebPEncodeMixin, unittest.TestCase ):
+class WebPEncodeTests(WebPEncodeMixin, unittest.TestCase):
     """
     WebPEncode test cases
     """
@@ -48,13 +48,15 @@ class WebPEncodeTests( WebPEncodeMixin, unittest.TestCase ):
         """
         Test the encodeRGB() method
         """
-        image = BitmapHandler( PNG_BITMAP_DATA, BitmapHandler.RGB,
-                               IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 3 )
-        result = self.webp_encoder.encodeRGB( image )
+        image = BitmapHandler(
+            PNG_BITMAP_DATA, BitmapHandler.RGB,
+            IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 3
+        )
+        result = self.webp_encoder.encodeRGB(image)
 
-        self.assertIsInstance( result, WebPHandler )
-        self.assertEqual( result.width, IMAGE_WIDTH )
-        self.assertEqual( result.height, IMAGE_HEIGHT )
+        self.assertIsInstance(result, WebPHandler)
+        self.assertEqual(result.width, IMAGE_WIDTH)
+        self.assertEqual(result.height, IMAGE_HEIGHT)
 
     def test_encode_RGBA(self):
         """
@@ -62,22 +64,24 @@ class WebPEncodeTests( WebPEncodeMixin, unittest.TestCase ):
         """
         # Convert to RGBA
         size = IMAGE_WIDTH * IMAGE_HEIGHT
-        bitmap = bytearray( size * 4 )
+        bitmap = bytearray(size * 4)
 
-        for i in xrange( size ):
-            bitmap[ i * 4 ]     = PNG_BITMAP_DATA[ i * 3 ]
+        for i in xrange(size):
+            bitmap[ i * 4 ] = PNG_BITMAP_DATA[ i * 3 ]
             bitmap[ i * 4 + 1 ] = PNG_BITMAP_DATA[ i * 3 + 1 ]
             bitmap[ i * 4 + 2 ] = PNG_BITMAP_DATA[ i * 3 + 2 ]
 
-        image = BitmapHandler( bitmap, BitmapHandler.RGBA,
-                               IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 4 )
+        image = BitmapHandler(
+            bitmap, BitmapHandler.RGBA,
+            IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 4
+        )
 
         # Encode image
-        result = self.webp_encoder.encodeRGB( image )
+        result = self.webp_encoder.encodeRGB(image)
 
-        self.assertIsInstance( result, WebPHandler )
-        self.assertEqual( result.width, IMAGE_WIDTH )
-        self.assertEqual( result.height, IMAGE_HEIGHT )
+        self.assertIsInstance(result, WebPHandler)
+        self.assertEqual(result.width, IMAGE_WIDTH)
+        self.assertEqual(result.height, IMAGE_HEIGHT)
 
     def test_encode_BGRA(self):
         """
@@ -85,22 +89,24 @@ class WebPEncodeTests( WebPEncodeMixin, unittest.TestCase ):
         """
         # Convert to RGBA
         size = IMAGE_WIDTH * IMAGE_HEIGHT
-        bitmap = bytearray( size * 4 )
+        bitmap = bytearray(size * 4)
 
-        for i in xrange( size ):
-            bitmap[ i * 4 ]     = PNG_BITMAP_DATA[ i * 3 + 2 ]
+        for i in xrange(size):
+            bitmap[ i * 4 ] = PNG_BITMAP_DATA[ i * 3 + 2 ]
             bitmap[ i * 4 + 1 ] = PNG_BITMAP_DATA[ i * 3 + 1 ]
             bitmap[ i * 4 + 2 ] = PNG_BITMAP_DATA[ i * 3 ]
 
-        image = BitmapHandler( bitmap, BitmapHandler.BGRA,
-                               IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 4 )
+        image = BitmapHandler(
+            bitmap, BitmapHandler.BGRA,
+            IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 4
+        )
 
         # Encode image
-        result = self.webp_encoder.encodeBGRA( image )
+        result = self.webp_encoder.encodeBGRA(image)
 
-        self.assertIsInstance( result, WebPHandler )
-        self.assertEqual( result.width, IMAGE_WIDTH )
-        self.assertEqual( result.height, IMAGE_HEIGHT )
+        self.assertIsInstance(result, WebPHandler)
+        self.assertEqual(result.width, IMAGE_WIDTH)
+        self.assertEqual(result.height, IMAGE_HEIGHT)
 
     def test_encode_BGR(self):
         """
@@ -108,32 +114,36 @@ class WebPEncodeTests( WebPEncodeMixin, unittest.TestCase ):
         """
         # Convert to RGBA
         size = IMAGE_WIDTH * IMAGE_HEIGHT
-        bitmap = bytearray( size * 4 )
+        bitmap = bytearray(size * 4)
 
-        for i in xrange( size ):
-            bitmap[ i * 4 ]     = PNG_BITMAP_DATA[ i * 3 + 2 ]
+        for i in xrange(size):
+            bitmap[ i * 4 ] = PNG_BITMAP_DATA[ i * 3 + 2 ]
             bitmap[ i * 4 + 1 ] = PNG_BITMAP_DATA[ i * 3 + 1 ]
             bitmap[ i * 4 + 2 ] = PNG_BITMAP_DATA[ i * 3 ]
 
-        image = BitmapHandler( bitmap, BitmapHandler.BGRA,
-                               IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 4 )
+        image = BitmapHandler(
+            bitmap, BitmapHandler.BGRA,
+            IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 4
+        )
 
         # Encode image
-        result = self.webp_encoder.encodeBGRA( image )
+        result = self.webp_encoder.encodeBGRA(image)
 
-        self.assertIsInstance( result, WebPHandler )
-        self.assertEqual( result.width, IMAGE_WIDTH )
-        self.assertEqual( result.height, IMAGE_HEIGHT )
+        self.assertIsInstance(result, WebPHandler)
+        self.assertEqual(result.width, IMAGE_WIDTH)
+        self.assertEqual(result.height, IMAGE_HEIGHT)
 
     def test_output_RGB(self):
         """
         Export encodeRGB() method result to file
         """
-        image = BitmapHandler( PNG_BITMAP_DATA, BitmapHandler.RGB,
-                               IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 3 )
-        result = self.webp_encoder.encodeRGB( image )
+        image = BitmapHandler(
+            PNG_BITMAP_DATA, BitmapHandler.RGB,
+            IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 3
+        )
+        result = self.webp_encoder.encodeRGB(image)
 
-        file( ENCODE_FILENAME.format( "RGB" ), "wb" ).write( result.data )
+        file(ENCODE_FILENAME.format("RGB"), "wb").write(result.data)
 
     def test_output_RGBA(self):
         """
@@ -141,20 +151,22 @@ class WebPEncodeTests( WebPEncodeMixin, unittest.TestCase ):
         """
         # Convert to RGBA
         size = IMAGE_WIDTH * IMAGE_HEIGHT
-        bitmap = bytearray( size * 4 )
+        bitmap = bytearray(size * 4)
 
-        for i in xrange( size ):
-            bitmap[ i * 4 ]     = PNG_BITMAP_DATA[ i * 3 ]
+        for i in xrange(size):
+            bitmap[ i * 4 ] = PNG_BITMAP_DATA[ i * 3 ]
             bitmap[ i * 4 + 1 ] = PNG_BITMAP_DATA[ i * 3 + 1 ]
             bitmap[ i * 4 + 2 ] = PNG_BITMAP_DATA[ i * 3 + 2 ]
 
-        image = BitmapHandler( bitmap, BitmapHandler.RGBA,
-                               IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 4 )
+        image = BitmapHandler(
+            bitmap, BitmapHandler.RGBA,
+            IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 4
+        )
 
         # Save image
-        result = self.webp_encoder.encodeRGBA( image )
+        result = self.webp_encoder.encodeRGBA(image)
 
-        file( ENCODE_FILENAME.format( "RGBA" ), "wb" ).write( result.data )
+        file(ENCODE_FILENAME.format("RGBA"), "wb").write(result.data)
 
     def test_output_BGRA(self):
         """
@@ -162,20 +174,22 @@ class WebPEncodeTests( WebPEncodeMixin, unittest.TestCase ):
         """
         # Convert to RGBA
         size = IMAGE_WIDTH * IMAGE_HEIGHT
-        bitmap = bytearray( size * 4 )
+        bitmap = bytearray(size * 4)
 
-        for i in xrange( size ):
-            bitmap[ i * 4 ]     = PNG_BITMAP_DATA[ i * 3 + 2 ]
+        for i in xrange(size):
+            bitmap[ i * 4 ] = PNG_BITMAP_DATA[ i * 3 + 2 ]
             bitmap[ i * 4 + 1 ] = PNG_BITMAP_DATA[ i * 3 + 1 ]
             bitmap[ i * 4 + 2 ] = PNG_BITMAP_DATA[ i * 3 ]
 
-        image = BitmapHandler( bitmap, BitmapHandler.BGRA,
-                               IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 4 )
+        image = BitmapHandler(
+            bitmap, BitmapHandler.BGRA,
+            IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 4
+        )
 
         # Save image
-        result = self.webp_encoder.encodeBGRA( image )
+        result = self.webp_encoder.encodeBGRA(image)
 
-        file( ENCODE_FILENAME.format( "BGRA" ), "wb" ).write( result.data )
+        file(ENCODE_FILENAME.format("BGRA"), "wb").write(result.data)
 
     def test_output_BGR(self):
         """
@@ -183,17 +197,19 @@ class WebPEncodeTests( WebPEncodeMixin, unittest.TestCase ):
         """
         # Convert to RGBA
         size = IMAGE_WIDTH * IMAGE_HEIGHT
-        bitmap = bytearray( size * 3 )
+        bitmap = bytearray(size * 3)
 
-        for i in xrange( size ):
-            bitmap[ i * 3 ]     = PNG_BITMAP_DATA[ i * 3 + 2 ]
+        for i in xrange(size):
+            bitmap[ i * 3 ] = PNG_BITMAP_DATA[ i * 3 + 2 ]
             bitmap[ i * 3 + 1 ] = PNG_BITMAP_DATA[ i * 3 + 1 ]
             bitmap[ i * 3 + 2 ] = PNG_BITMAP_DATA[ i * 3 ]
 
-        image = BitmapHandler( bitmap, BitmapHandler.BGR,
-                               IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 3 )
+        image = BitmapHandler(
+            bitmap, BitmapHandler.BGR,
+            IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 3
+        )
 
         # Save image
-        result = self.webp_encoder.encodeBGR( image )
+        result = self.webp_encoder.encodeBGR(image)
 
-        file( ENCODE_FILENAME.format( "BGR" ), "wb" ).write( result.data )
+        file(ENCODE_FILENAME.format("BGR"), "wb").write(result.data)
