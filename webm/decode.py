@@ -31,6 +31,9 @@ from webm import _LIBRARY
 from webm.handlers import BitmapHandler
 
 
+# Set function parameters
+_LIBRARY.WebPGetInfo.argtypes = [c_void_p, c_uint, c_void_p, c_void_p]
+
 # Set return types
 _LIBRARY.WebPDecodeRGB.restype = c_void_p
 _LIBRARY.WebPDecodeRGBA.restype = c_void_p
@@ -64,18 +67,20 @@ class WebPDecoder(object):
         :type data: bytearray
         :rtype: tuple(int, int)
         """
+        # Call C function
         width = c_int(-1)
         height = c_int(-1)
-        size = c_uint(len(data))
+        size = len(data)
 
-        ret = _LIBRARY.WebPGetInfo(str(data),
-                                      size,
-                                      byref(width), byref(height))
+        ret = _LIBRARY.WebPGetInfo(
+            str(data), size, byref(width), byref(height))
 
+        # Check return code
         if ret == 0:
             raise HeaderError
-        else:
-            return (width.value, height.value)
+
+        # Return values
+        return (width.value, height.value)
 
     def _decode(self, data, decode_func, pixel_sz):
         """
