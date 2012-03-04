@@ -39,7 +39,7 @@ class BitmapHandler(object):
 
     FORMATS = (RGB, RGBA, BGR, BGRA, YUV)
 
-    def __init__(self, bitmap, format, width, height, stride,
+    def __init__(self, bitmap, fmt, width, height, stride,
                  u_bitmap=None, v_bitmap=None, uv_stride= -1):
         """
         Constructor accepts the decode image data as a bitmap and its
@@ -55,7 +55,7 @@ class BitmapHandler(object):
         must be passed as well.
 
         :param bitmap: The image bitmap
-        :param format: The image format
+        :param fmt: The image format
         :param width: The image width
         :param height: The mage height
         :param u_bitmap: The U chrominance component bitmap
@@ -64,7 +64,7 @@ class BitmapHandler(object):
         :param uv_stride: The UV stride
 
         :type bitmap: bytearray
-        :type format: M{WebPImage.FORMATS}
+        :type fmt: M{WebPImage.FORMATS}
         :type width: int
         :type height: int
         :type u_bitmap: bytearray
@@ -77,23 +77,23 @@ class BitmapHandler(object):
         self.v_bitmap = v_bitmap
         self.stride = stride
         self.uv_stride = uv_stride
-        self.format = format
+        self.format = fmt
         self.width = width
         self.height = height
 
-        # Check if bitma handler is valid
+        # Check if bitmap handler is valid
         is_valid = (isinstance(bitmap, bytearray)
-                      and format in self.FORMATS
-                      and width > -1
-                      and height > -1)
+                    and format in self.FORMATS
+                    and width > -1
+                    and height > -1)
 
         # Additional setups for YUV image
         if is_valid and format == self.YUV:
             # Check if YUV image is valid
             is_valid = (isinstance(u_bitmap, bytearray)
-                         and isinstance(v_bitmap, bytearray)
-                         and stride > -1
-                         and uv_stride > -1)
+                        and isinstance(v_bitmap, bytearray)
+                        and stride > -1
+                        and uv_stride > -1)
 
         # Set valid flag
         self.is_valid = is_valid
