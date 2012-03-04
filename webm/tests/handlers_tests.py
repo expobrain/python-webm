@@ -27,8 +27,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from webm.handlers import WebPHandler, BitmapHandler
-from webm.tests.common import IMAGE_WIDTH, IMAGE_HEIGHT, WEBP_IMAGE_DATA, \
-    WEBP_IMAGE_FILE
+from webm.tests.common import (IMAGE_WIDTH, IMAGE_HEIGHT, WEBP_IMAGE_DATA,
+    WEBP_IMAGE_FILE)
 import os
 
 try:
@@ -39,7 +39,7 @@ except:
     raise
 
 
-class BitmapHandlerTests( unittest.TestCase ):
+class BitmapHandlerTests(unittest.TestCase):
     """
     BitmapHandler tests cases
     """
@@ -48,11 +48,11 @@ class BitmapHandlerTests( unittest.TestCase ):
         """
         Test image types enumerator
         """
-        self.assertEqual( BitmapHandler.RGB, 0 )
-        self.assertEqual( BitmapHandler.RGBA, 1 )
-        self.assertEqual( BitmapHandler.BGR, 2 )
-        self.assertEqual( BitmapHandler.BGRA, 3 )
-        self.assertEqual( BitmapHandler.YUV, 4 )
+        self.assertEqual(BitmapHandler.RGB, 0)
+        self.assertEqual(BitmapHandler.RGBA, 1)
+        self.assertEqual(BitmapHandler.BGR, 2)
+        self.assertEqual(BitmapHandler.BGRA, 3)
+        self.assertEqual(BitmapHandler.YUV, 4)
 
     def test_is_valid(self):
         """
@@ -60,66 +60,65 @@ class BitmapHandlerTests( unittest.TestCase ):
         """
         # Invalid
         self.assertFalse(
-            BitmapHandler( None, None, IMAGE_WIDTH, IMAGE_HEIGHT, -1 ).is_valid
-        )
-        self.assertFalse( BitmapHandler( None, None, -1, -1, -1 ).is_valid )
+            BitmapHandler(None, None, IMAGE_WIDTH, IMAGE_HEIGHT, -1).is_valid)
+        self.assertFalse(BitmapHandler(None, None, -1, -1, -1).is_valid)
         self.assertFalse(
-            BitmapHandler( None, BitmapHandler.YUV, 0, 0, None ).is_valid
-        )
+            BitmapHandler(None, BitmapHandler.YUV, 0, 0, None).is_valid)
 
         # Valid
-        image = BitmapHandler( WEBP_IMAGE_DATA,
-                               BitmapHandler.RGB,
-                               IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 3 )
+        image = BitmapHandler(
+            WEBP_IMAGE_DATA, BitmapHandler.RGB,
+            IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH * 3
+        )
 
-        self.assertTrue( image.is_valid )
-        self.assertEqual( image.bitmap, WEBP_IMAGE_DATA )
-        self.assertEqual( image.format, BitmapHandler.RGB )
-        self.assertEqual( image.width, IMAGE_WIDTH )
-        self.assertEqual( image.height, IMAGE_HEIGHT )
+        self.assertTrue(image.is_valid)
+        self.assertEqual(image.bitmap, WEBP_IMAGE_DATA)
+        self.assertEqual(image.format, BitmapHandler.RGB)
+        self.assertEqual(image.width, IMAGE_WIDTH)
+        self.assertEqual(image.height, IMAGE_HEIGHT)
 
     def test_is_valid_yuv(self):
         """
         Test is_valid() property for YUV format
         """
         # Create fake Y and UV bitmaps
-        bitmap      = bytearray( IMAGE_WIDTH * IMAGE_HEIGHT )
-        uv_bitmap   = bytearray( int( IMAGE_WIDTH * IMAGE_HEIGHT / 2 ))
+        bitmap = bytearray(IMAGE_WIDTH * IMAGE_HEIGHT)
+        uv_bitmap = bytearray(int(IMAGE_WIDTH * IMAGE_HEIGHT / 2))
 
         # Create image instance
-        image = BitmapHandler( bitmap,
-                           BitmapHandler.YUV,
-                           IMAGE_WIDTH, IMAGE_HEIGHT,
-                           u_bitmap=uv_bitmap, v_bitmap=uv_bitmap,
-                           stride=IMAGE_WIDTH, uv_stride=int(IMAGE_WIDTH/2) )
+        image = BitmapHandler(
+            bitmap, BitmapHandler.YUV, IMAGE_WIDTH, IMAGE_HEIGHT,
+            u_bitmap=uv_bitmap, v_bitmap=uv_bitmap,
+            stride=IMAGE_WIDTH, uv_stride=int(IMAGE_WIDTH / 2)
+        )
 
-        self.assertTrue( image.is_valid )
-        self.assertEqual( image.bitmap, bitmap )
-        self.assertEqual( image.format, BitmapHandler.YUV )
-        self.assertEqual( image.width, IMAGE_WIDTH )
-        self.assertEqual( image.height, IMAGE_HEIGHT )
-        self.assertEqual( image.u_bitmap, uv_bitmap )
-        self.assertEqual( image.v_bitmap, uv_bitmap )
-        self.assertEqual( image.stride, IMAGE_WIDTH )
-        self.assertEqual( image.uv_stride, int(IMAGE_WIDTH / 2) )
+        self.assertTrue(image.is_valid)
+        self.assertEqual(image.bitmap, bitmap)
+        self.assertEqual(image.format, BitmapHandler.YUV)
+        self.assertEqual(image.width, IMAGE_WIDTH)
+        self.assertEqual(image.height, IMAGE_HEIGHT)
+        self.assertEqual(image.u_bitmap, uv_bitmap)
+        self.assertEqual(image.v_bitmap, uv_bitmap)
+        self.assertEqual(image.stride, IMAGE_WIDTH)
+        self.assertEqual(image.uv_stride, int(IMAGE_WIDTH / 2))
 
 
-class WebPHandlerTests( unittest.TestCase ):
+class WebPHandlerTests(unittest.TestCase):
     """
     WebPHandler test cases
     """
 
-    TEST_IMAGE_FILE = os.path.join( os.path.dirname( __file__ ),
-                                    "webphandler_{0}.webp" )
+    TEST_IMAGE_FILE = os.path.join(os.path.dirname(__file__),
+                                   "webphandler_{0}.webp")
 
     def test_load_by_filename(self):
         """
         Test loading a .webp file
         """
-        image = WebPHandler.from_file( WEBP_IMAGE_FILE )
+        image = WebPHandler.from_file(WEBP_IMAGE_FILE)
 
-        self.assertIsInstance( image, WebPHandler )
-        self.assertTrue( image.is_valid )
-        self.assertEqual( image.width, IMAGE_WIDTH )
-        self.assertEqual( image.height, IMAGE_HEIGHT )
-        self.assertIsInstance( image.data, bytearray )
+        self.assertIsInstance(image, WebPHandler)
+        self.assertTrue(image.is_valid)
+        self.assertEqual(image.width, IMAGE_WIDTH)
+        self.assertEqual(image.height, IMAGE_HEIGHT)
+        self.assertIsInstance(image.data, bytearray)
