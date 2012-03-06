@@ -14,7 +14,7 @@ Platforms
 Here a list of platforms with the current support status of the python-webm
 package:
 
-* Windows: NOT SUPPORTED YET
+* Windows: SUPPORTED
 * Ubuntu: SUPPORTED
 * Mac OS X: SUPPORTED
 
