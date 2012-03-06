@@ -26,10 +26,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 import sys
+from ctypes import cdll as loader
 
 
 # Generic constants
-__VERSION__ = "0.2.0"
+__VERSION__ = "0.2.1"
 
 PIXEL_SZ = 3
 PIXEL_ALPHA_SZ = 4
@@ -37,18 +38,12 @@ PIXEL_ALPHA_SZ = 4
 
 # Per-OS setup
 if sys.platform == "win32":
-    from ctypes import windll as loader
-
-    _LIBRARY = "libwebp.dll"
+    _LIBRARY = "libwebp_a.dll"
 
 elif sys.platform == "linux2":
-    from ctypes import cdll as loader
-
     _LIBRARY = "libwebp.so.0"
 
 elif sys.platform == "darwin":
-    from ctypes import cdll as loader
-
     _LIBRARY = "libwebp.dylib"
 
 else:
