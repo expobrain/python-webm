@@ -49,17 +49,16 @@ class WebPDecodeTests(unittest.TestCase):
         """
         result = decode.GetInfo(WEBP_IMAGE_DATA)
 
-        self.assertIsInstance(result, tuple)
+        self.assertTrue(isinstance(result, tuple))
         self.assertEqual(len(result), 2)
-        self.assertIsInstance(result[0], int)
-        self.assertIsInstance(result[1], int)
+        self.assertTrue(isinstance(result[0], int))
+        self.assertTrue(isinstance(result[1], int))
 
     def test_get_info_error(self):
         """
         Test the GetInfo() method
         """
-        with self.assertRaises(Exception):
-            decode.GetInfo(create_string_buffer(0))
+        self.assertRaises(Exception, decode.GetInfo, create_string_buffer(0))
 
     def test_decode_RGB(self):
         """
@@ -69,7 +68,7 @@ class WebPDecodeTests(unittest.TestCase):
         stride = IMAGE_WIDTH * 3
         size = stride * IMAGE_HEIGHT
 
-        self.assertIsInstance(result, BitmapHandler)
+        self.assertTrue(isinstance(result, BitmapHandler))
         self.assertEqual(len(result.bitmap), size)
         self.assertEqual(result.format, BitmapHandler.RGB)
         self.assertEqual(result.width, IMAGE_WIDTH)
@@ -84,7 +83,7 @@ class WebPDecodeTests(unittest.TestCase):
         stride = IMAGE_WIDTH * 4
         size = stride * IMAGE_HEIGHT
 
-        self.assertIsInstance(result, BitmapHandler)
+        self.assertTrue(isinstance(result, BitmapHandler))
         self.assertEqual(len(result.bitmap), size)
         self.assertEqual(result.format, BitmapHandler.RGBA)
         self.assertEqual(result.width, IMAGE_WIDTH)
@@ -99,7 +98,7 @@ class WebPDecodeTests(unittest.TestCase):
         stride = IMAGE_WIDTH * 3
         size = stride * IMAGE_HEIGHT
 
-        self.assertIsInstance(result, BitmapHandler)
+        self.assertTrue(isinstance(result, BitmapHandler))
         self.assertEqual(len(result.bitmap), size)
         self.assertEqual(result.format, BitmapHandler.BGR)
         self.assertEqual(result.width, IMAGE_WIDTH)
@@ -114,7 +113,7 @@ class WebPDecodeTests(unittest.TestCase):
         stride = IMAGE_WIDTH * 4
         size = stride * IMAGE_HEIGHT
 
-        self.assertIsInstance(result, BitmapHandler)
+        self.assertTrue(isinstance(result, BitmapHandler))
         self.assertEqual(len(result.bitmap), size)
         self.assertEqual(result.format, BitmapHandler.BGRA)
         self.assertEqual(result.width, IMAGE_WIDTH)
@@ -128,7 +127,7 @@ class WebPDecodeTests(unittest.TestCase):
         result = decode.DecodeYUV(WEBP_IMAGE_DATA)
         size = IMAGE_WIDTH * IMAGE_HEIGHT
 
-        self.assertIsInstance(result, BitmapHandler)
+        self.assertTrue(isinstance(result, BitmapHandler))
         self.assertEqual(len(result.bitmap), size)
         self.assertEqual(result.format, BitmapHandler.YUV)
         self.assertEqual(result.width, IMAGE_WIDTH)

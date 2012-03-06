@@ -114,8 +114,8 @@ class WebPHandlerTests(unittest.TestCase):
         """
         image = WebPHandler.from_file(WEBP_IMAGE_FILE)
 
-        self.assertIsInstance(image, WebPHandler)
+        self.assertTrue(isinstance(image, WebPHandler))
         self.assertTrue(image.is_valid)
         self.assertEqual(image.width, IMAGE_WIDTH)
         self.assertEqual(image.height, IMAGE_HEIGHT)
-        self.assertIsInstance(image.data, bytearray)
+        self.assertTrue(isinstance(image.data, bytearray))

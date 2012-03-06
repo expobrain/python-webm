@@ -52,7 +52,7 @@ class WebPEncodeTests(unittest.TestCase):
         )
         result = encode.EncodeRGB(image)
 
-        self.assertIsInstance(result, WebPHandler)
+        self.assertTrue(isinstance(result, WebPHandler))
         self.assertEqual(result.width, IMAGE_WIDTH)
         self.assertEqual(result.height, IMAGE_HEIGHT)
 
@@ -77,7 +77,7 @@ class WebPEncodeTests(unittest.TestCase):
         # Encode image
         result = encode.EncodeRGB(image)
 
-        self.assertIsInstance(result, WebPHandler)
+        self.assertTrue(isinstance(result, WebPHandler))
         self.assertEqual(result.width, IMAGE_WIDTH)
         self.assertEqual(result.height, IMAGE_HEIGHT)
 
@@ -102,7 +102,7 @@ class WebPEncodeTests(unittest.TestCase):
         # Encode image
         result = encode.EncodeBGRA(image)
 
-        self.assertIsInstance(result, WebPHandler)
+        self.assertTrue(isinstance(result, WebPHandler))
         self.assertEqual(result.width, IMAGE_WIDTH)
         self.assertEqual(result.height, IMAGE_HEIGHT)
 
@@ -127,7 +127,7 @@ class WebPEncodeTests(unittest.TestCase):
         # Encode image
         result = encode.EncodeBGRA(image)
 
-        self.assertIsInstance(result, WebPHandler)
+        self.assertTrue(isinstance(result, WebPHandler))
         self.assertEqual(result.width, IMAGE_WIDTH)
         self.assertEqual(result.height, IMAGE_HEIGHT)
 
